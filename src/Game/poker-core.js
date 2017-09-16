@@ -1,16 +1,16 @@
-const suit = "CDHS";
-const run = "234567890JQKA";
-const suitArray = [...suit];
-const runArray = [...run];
-const runSuitArray = [...run, ...suit];
+export const suit = "CDHS";
+export const run = "234567890JQKA";
+export const suitArray = [...suit];
+export const runArray = [...run];
+export const runSuitArray = [...run, ...suit];
 
-const check = {
+export const check = {
   "2": /.2/g, "3": /.3/g, "4": /.4/g, "5": /.5/g, "6": /.6/g, "7": /.7/g,
   "8": /.8/g, "9": /.9/g, "0": /.0/g, "J": /.J/g, "Q": /.Q/g, "K": /.K/g,
   "A": /.A/g, "C": /C./g, "D": /D./g, "H": /H./g, "S": /S./g,
 }
 
-const pokerHands = {
+export const pokerHands = {
   HIGH_CARD: { name: "High Card", value: 0 },
   ONE_PAIR: { name: "One Pair", value: 100 },
   TWO_PAIR: { name: "Two Pair", value: 200 },
@@ -23,7 +23,10 @@ const pokerHands = {
   ROYAL_FLUSH: { name: "Royal flush", value: 900 }
 };
 
-const originDeck = [...suit]
-  .map(s => [...run]
-  .map(r => [s, r]))
-  .reduce((a, b) => [...a, ...b]);
+// export const originDeck = [...suit].map(s => [...run].map(r => [s, r])).reduce((a, b) => [...a, ...b]);
+
+export const originDeck = [].concat.apply([],
+    [].slice.call(suit).map(s => [].slice.call(run).map(r => [s, r]))
+  )
+
+export const shuffle = () => Math.random() > .5 ? 1 : -1

@@ -1,8 +1,8 @@
 import { combineReducers } from "redux";
-import pokerGameReducer from "./pokerGameReducer";
+import poker from "./poker";
 
 const rootReducer = combineReducers({
-  pokerGameReducer
+  poker
 });
 
 export default rootReducer;

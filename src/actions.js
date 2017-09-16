@@ -1,3 +1,4 @@
+export const INIT = "INIT";
 export const DEAL_CARD = "DEAL_CARD";
 export const SHUFFLE = "SHUFFLE";
 export const SET_SMALL_BLIND = "SET_SMALL_BLIND";
