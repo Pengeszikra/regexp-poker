@@ -10,3 +10,4 @@ export const SCORE = "SCORE";
 export const SIT_DOWN_PLAYER = "SIT_DOWN_PLAYER";
 export const STAND_UP_PLAYER = "STAND_UP_PLAYER";
 export const INIT_GAME = "INIT_GAME";
+export const BET = "BET";

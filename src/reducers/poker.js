@@ -4,10 +4,13 @@ const initialState = {
   players: [],
   dealer: {
     hand: [],
-    bet: 0
+    bet: 0,
+    message: ""
   },
   deck: []
 }
+
+const dataToCard = data => ( data ? {suit:data[0],run:data[1],hasReveal:true} : null);
 
 const poker = (state = initialState, action) => {
   // console.log(action);
@@ -32,7 +35,7 @@ const poker = (state = initialState, action) => {
     case ActionType.DEAL_CARD: {
       let deck = [...state.deck];
       let data = deck.pop();
-      let card = {suit:data[0],run:data[1],hasReveal:true};
+      let card = dataToCard(data);
       return {
         ...state,
         dealer: {
@@ -40,6 +43,28 @@ const poker = (state = initialState, action) => {
           hand: [...state.dealer.hand, card]          
         },
         deck
+      }
+    }
+
+    case ActionType.SCORE: {
+      let {message} = action;
+      return {
+        ...state,
+        dealer: {
+          ...state.dealer,
+          message
+        }
+      }
+    }
+
+    case ActionType.BET: {
+      let {bet} = action;
+      return {
+        ...state,
+        dealer: {
+          ...state.dealer,
+          bet
+        }
       }
     }
 

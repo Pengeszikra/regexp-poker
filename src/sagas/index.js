@@ -11,12 +11,16 @@ export default function *rootSaga() {
 }
 
 export function *startLog(){
-  yield console.log('--- saga ---');
   let deck = core.originDeck.sort( core.shuffle );
   yield put({type:ActionType.SHUFFLE,deck});
   for(let i=0;i<5;i++){
-    yield call(delay, 500);
+    yield call(delay, 200);
     yield put({type:ActionType.DEAL_CARD});
   }
+  yield put({type:ActionType.SCORE,message:"regexp poker start working"})
+  for(let bet=0;bet<=5000;bet+=100){
+    yield call(delay, 50);
+    yield put({type:ActionType.BET,bet});
+  }  
 }
 
