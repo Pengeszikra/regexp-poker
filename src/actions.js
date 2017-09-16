@@ -6,3 +6,6 @@ export const THE_FLOP = "THE_FLOP";
 export const THE_RIVER = "THE_RIVER";
 export const THE_SHODOWN = "THE_SHODOWN";
 export const SCORE = "SCORE";
+export const SIT_DOWN_PLAYER = "SIT_DOWN_PLAYER";
+export const STAND_UP_PLAYER = "STAND_UP_PLAYER";
+export const INIT_GAME = "INIT_GAME";
