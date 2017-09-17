@@ -12,3 +12,7 @@ export const SIT_DOWN_PLAYER = "SIT_DOWN_PLAYER";
 export const STAND_UP_PLAYER = "STAND_UP_PLAYER";
 export const INIT_GAME = "INIT_GAME";
 export const BET = "BET";
+
+export const COLLECT_BET = "COLLECT_BET";
+export const DEAL_CARD_TO_DEALER = "DEAL_CARD_TO_DEALER";
+export const DEALER_MESSAGE = "DEALER_MESSAGE";
