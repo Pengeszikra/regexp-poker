@@ -1,6 +1,6 @@
 import "../style/poker.scss";
 import { Component } from "preact";
-import Player from "./Player";
+import Players from "./Players";
 import Dealer from "./Dealer";
 
 export default class Desk extends Component {
@@ -9,7 +9,7 @@ export default class Desk extends Component {
       <div id="room">
         <div id="desk">                    
           <Dealer dealer={dealer} />
-          {players.map(player => <Player player={player} />)}
+          <Players players={players} />)}
         </div>
       </div>
     );

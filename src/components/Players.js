@@ -1,12 +1,12 @@
 import { Component } from "preact";
-import Player from "./components/Player";
+import Player from "./Player";
 
 export default class Players extends Component {
   render({ players }) {
     return (
-      <div id="players">
+      <div id="players">        
         {players.map(player => (
-          <Player player={player} key={player.key} />
+          <Player player={player}/>
         ))}
       </div>
     );
