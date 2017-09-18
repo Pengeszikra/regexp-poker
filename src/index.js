@@ -7,8 +7,7 @@ import createSagaMiddleware from "redux-saga";
 import PokerContainer from "./PokerContainer";
 import * as ActionType from "./Game/action";
 
-
-console.log('regexp-poker v 0.0.8');
+console.log('regexp-poker v 0.0.9');
 
 const sagaMiddleware = createSagaMiddleware();
 const store = createStore(  
@@ -17,6 +16,7 @@ const store = createStore(
     applyMiddleware(sagaMiddleware)
   )
 )
+
 sagaMiddleware.run(rootSaga);
 
 render(

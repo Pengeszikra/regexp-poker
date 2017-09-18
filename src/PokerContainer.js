@@ -5,8 +5,8 @@ import * as Actions from "./Game/action";
 import Desk from "./components/Desk";
 
 class PokerContatiner extends Component {
-  render({poker}){
-    return <Desk players={poker.players} dealer={poker.dealer}/>
+  render({table, dealer}){
+    return <Desk players={table.players} dealer={dealer}/>
   }
 }
 

@@ -3,7 +3,7 @@ import * as ActionType from '../actions';
 const initialState = {
   hand: [],
   bet: 0,
-  message: ""
+  message: ""  
 }
 
 const dataToCard = data => ( data ? {suit:data[0],run:data[1],hasReveal:true} : null);

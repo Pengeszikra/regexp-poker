@@ -1,9 +1,11 @@
 import { combineReducers } from "redux";
-import poker from "./poker";
+import table from "./table";
+import player from "./player";
 import dealer from "./dealer";
 
 const rootReducer = combineReducers({
-  poker,
+  table,
+  player,
   dealer
 });
 
