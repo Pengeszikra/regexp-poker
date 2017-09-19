@@ -9,7 +9,7 @@ export default class Hand extends Component {
           <Card 
             suit={card.suit} 
             run={card.run} 
-            key={card.key} 
+            id={card.id} 
             hasReveal={card.hasReveal}
           />
         ))}

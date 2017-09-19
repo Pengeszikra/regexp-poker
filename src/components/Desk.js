@@ -9,7 +9,7 @@ export default class Desk extends Component {
       <div id="room">
         <div id="desk">                    
           <Dealer dealer={dealer} />          
-          <Players players={players} />)}
+          <Players players={players} />
         </div>
       </div>
     );

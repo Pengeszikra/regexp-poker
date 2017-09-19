@@ -14,10 +14,8 @@ const dataToCard = data => ( data ? {
   suit:data[0],
   run:data[1],
   hasReveal:true, 
-  key: core.gui()
+  id: core.gui()
 } : null);
-
-const getDeck = state => state.table.deck;
 
 export function *startLog(){
 
@@ -25,10 +23,41 @@ export function *startLog(){
 
   yield put({type:ActionType.SHUFFLE,deck});
   
-  deck = yield select(getDeck);
+  deck = yield select( state => state.table.deck );
+
+  var playerNames = [`Donowan`,`Maximilian`,`Edwin`,`Roberto`,`Jake`,`Petrovics`];
+  
+    for( name of playerNames ) {
+      yield call(delay, 50);
+      let player = { 
+        name, 
+        hand:[],
+        id: core.gui(),
+        chips: 500
+      }
+      yield put({type:ActionType.SIT_DOWN_PLAYER,player});
+    }
+
+  let players = yield select( store => store.table.players );  
+
+  for(let player of players){
+    yield call(delay, 150);
+    yield put({type:ActionType.DEAL_CARD_TO_PLAYER, card:deck.pop() , playerKey:player.id});
+    yield call(delay, 150);
+    yield put({type:ActionType.DEAL_CARD_TO_PLAYER, card:deck.pop() , playerKey:player.id});  
+  }
+
+  players = yield select( store => store.table.players );
+
+  console.log(players[0],players[0].hand[0].id)
+
+  yield put({type:ActionType.DROP_CARD, playerKey:players[0].id, cardKey: players[0].hand[0].id })
+  
+
+  yield put({type:ActionType.SHUFFLE,deck});
 
   for(let i=0;i<5;i++){
-    yield call(delay, 200);
+    yield call(delay, 100);
     let card = deck.pop();
     card.hasReveal = true;
     yield put({type:ActionType.DEAL_CARD_TO_DEALER, card});
@@ -41,18 +70,8 @@ export function *startLog(){
     yield call(delay, 50);
     yield put({type:ActionType.COLLECT_BET,bet});
   }
-  
-  var playerNames = [`Donowan`,`Maximilian`,`Edwin`,`Roberto`,`Jake`,`Petrovics`];
-
-  for( name of playerNames ) {
-    yield call(delay, 150);
-    let player = { 
-      name, 
-      hand:[deck.pop(),{...(deck.pop()),hasReveal:true}],
-      key: core.gui()
-    }
-    yield put({type:ActionType.SIT_DOWN_PLAYER,player});
-  }
+ 
 
 }
+
 

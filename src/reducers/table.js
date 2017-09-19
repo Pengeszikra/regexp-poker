@@ -25,6 +25,30 @@ const table = (state = initialState, action) => {
       }
     }
 
+    case ActionType.DEAL_CARD_TO_PLAYER: {
+      let {playerKey, card} = action;           
+      return {
+        ...state,
+        players: state.players.map( player =>
+          player.id == playerKey
+            ? {...player, hand:[...player.hand, card]}
+            : player          
+        )
+      }
+    }
+
+    case ActionType.DROP_CARD: {
+      let {playerKey, cardKey} = action;           
+      return {
+        ...state,
+        players: state.players.map( player =>
+          player.id == playerKey
+            ? {...player, hand: player.hand.filter( card => cardKey !== card.id ) }
+            : player          
+        )
+      }
+    }
+
     default:
       return state;
   }
