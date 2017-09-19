@@ -407,3 +407,20 @@ class PokerGame {
 
 var job = new PokerGame()
 job.runner(7)
+
+// https://github.com/paularmstrong/normalizr
+
+const state = {
+  cards: {
+    [cardKey] : { suit, run , hasRevealed , key }
+  }
+  deck: [ cardKey ... ]
+  players: {
+    [playerKey] : { name , key }
+  }
+  hands: {
+    [handsKey] : { owner: playerKey , cards: [ cardKey ... ] , key }
+  }  
+  table: [ playerKey ... ]
+}
+

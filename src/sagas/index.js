@@ -46,7 +46,11 @@ export function *startLog(){
 
   for( name of playerNames ) {
     yield call(delay, 150);
-    let player = { name, hand:[deck.pop(),{...(deck.pop()),hasReveal:true}] }
+    let player = { 
+      name, 
+      hand:[deck.pop(),{...(deck.pop()),hasReveal:true}],
+      key: core.gui()
+    }
     yield put({type:ActionType.SIT_DOWN_PLAYER,player});
   }
 
