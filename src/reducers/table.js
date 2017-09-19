@@ -2,7 +2,7 @@ import * as ActionType from '../actions';
 
 const initialState = {
   players:[],
-  deck:[]
+  active: false
 }
 
 const table = (state = initialState, action) => {
@@ -44,6 +44,18 @@ const table = (state = initialState, action) => {
         players: state.players.map( player =>
           player.id == playerKey
             ? {...player, hand: player.hand.filter( card => cardKey !== card.id ) }
+            : player          
+        )
+      }
+    }
+
+    case ActionType.CHIPS: {
+      let {playerKey, amount} = action;           
+      return {
+        ...state,
+        players: state.players.map( player =>
+          player.id == playerKey
+            ? {...player, bet: player.chips + amount }
             : player          
         )
       }

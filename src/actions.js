@@ -17,3 +17,4 @@ export const BET = "BET";
 export const COLLECT_BET = "COLLECT_BET";
 export const DEAL_CARD_TO_DEALER = "DEAL_CARD_TO_DEALER";
 export const DEALER_MESSAGE = "DEALER_MESSAGE";
+export const CHIPS = "CHIPS";
