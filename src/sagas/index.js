@@ -10,12 +10,19 @@ export default function *rootSaga() {
   ]);
 }
 
-const dataToCard = data => ( data ? {suit:data[0],run:data[1],hasReveal:true} : null);
+const dataToCard = data => ( data ? {
+  suit:data[0],
+  run:data[1],
+  hasReveal:true, 
+  key: core.gui()
+} : null);
+
 const getDeck = state => state.table.deck;
 
 export function *startLog(){
 
   let deck = core.originDeck.sort( core.shuffle ).map( card => dataToCard(card) );
+
   yield put({type:ActionType.SHUFFLE,deck});
   
   deck = yield select(getDeck);

@@ -29,4 +29,6 @@ export const originDeck = [].concat.apply([],
     [].slice.call(suit).map(s => [].slice.call(run).map(r => [s, r]))
   )
 
-export const shuffle = () => Math.random() > .5 ? 1 : -1
+export const shuffle = () => Math.random() > .5 ? 1 : -1;
+
+export const gui = () => Math.random().toString(32).slice(2).toUpperCase();
