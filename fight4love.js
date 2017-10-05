@@ -23,4 +23,16 @@ function duel(names, guns){
   return alives.join('');
 }
 
+let alives = [..."12345678"]
+let killers = [..."1"]
+alives.filter( (na,i,ar) => 
+  killers.filter( kill => { 
+    let j = ar.indexOf(kill)    
+    let dif = Math.abs(i-j)
+    let alive = dif!=alives.length-1 && dif!=1	
+	return alive
+  }).length == killers.length
+)
+
+
 // duel(["Asda Btry","Csrt Dks","Gjhgj Hewr","Kewrwe Lhgj","Osdf Psde","Mretb Njhk","Isdf Jjhkhj","Eyui Ferd"],["CD","AB","MN","IJ","GH","EF","OP","KL"])
