@@ -2,22 +2,25 @@
 
 // [...'+-<>[].,'].map( c => c.charCodeAt(0) ).map( n => String.fromCharCode(65-43+n)+String.fromCharCode(n) ).join(" ")
 
-const brainLuck = (code, input) => {
-
-  const memSize = 90000;
-  const cells = new Uint8Array( memSize );
-  const copy = new Uint8Array(1);
-  let result = '';   
-  let ip = -1;
-  let cp = memSize / 2;
-  let nx = 0;
-  let stack = [];
+const brainLuck = (
+  code, 
+  input,
+  memSize = 90000,
+  cells = new Uint8Array( memSize ),
+  result = '',
+  ip = -1,
+  cp = memSize / 2,
+  nx = 0,
+  stack = []
+) => {
   let jumps = (code.match(/\[|\]/g) || []).reduce( (r, e) => {    
     nx = code.indexOf(e,nx+1);  
     if (e=="[") { stack.push(nx); } 
     else { let p = stack.pop(); r[p] = nx; r[']'+nx] = p; }
     return r;
   }, {} );
+
+  console.log(jumps);
 
   // "A+ C- R< T> q[ s] D. B,"
 
