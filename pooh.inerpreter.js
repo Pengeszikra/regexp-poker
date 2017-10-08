@@ -26,30 +26,47 @@ const descript = {
 */
 
 const poohbear = source => {
+  //source = source.match(/[c|p|W|E|P|N|T|Q|U|L|I|V|A|B|Y|D|\+|\-|<|>]+/g)[0];
 
-  const memSize = 70000;
+  const memSize = 90000;
   const cells = new Uint8Array( memSize );
   const copy = new Uint8Array(1);
-  const stack = [];  
-  
+    
   let result = '';   
   let ip = 0;
   let cp = memSize / 2;
+
+  let nx = 0;
+  let stack = [];
+  let jumps = (source.match(/W|E/g) || []).reduce( (r, e) => {    
+    nx = source.indexOf(e,nx+1);  
+    if (e=="W") { 
+      stack.push(nx);
+    } 
+    else { 
+      let p = stack.pop(); 
+      r[p] = nx; 
+      r['E'+nx] = p;
+    }
+    return r;
+  }, {} );
+
+  console.log( jumps )
 
   const rules = {
     ['+']() { cells[cp]++ },
     ['-']() { cells[cp]-- },
     ['>']() { cp++ },
     ['<']() { cp-- },
-        c() { copy[0]= cells[cp] },
+        c() { copy[0] = cells[cp] },
         p() { cells[cp] = copy[0] },
-        W() { if (cells[cp] != 0){ 
-              stack.push(ip);
-            } else { 
-              ip = source.indexOf('E',ip); 
-            } 
-          },
-        E() { ip = stack.pop()-1 },
+        W() { if(cells[cp] == 0){
+                let cip = jumps[ip];
+                //console.log( cip, ip );
+                ip = cip;
+              }
+            },
+        E() { ip = jumps['E'+ip] - 1; },
         P() { result += String.fromCharCode(cells[cp]) },
         N() { result += cells[cp] },
         T() { cells[cp] *= 2 },
@@ -66,6 +83,7 @@ const poohbear = source => {
 
   while( ip>=0 && ip<source.length ){
     //console.log(source[ip],result,cells[cp])
+    console.log( ip, source[ip] ,cells[cp] , result )
     let command = rules[source[ip]];
     if( typeof command === "function" ) { command() }
     ip++;    
@@ -74,34 +92,38 @@ const poohbear = source => {
   return result;
 };
 
-poohbear( 'LQTcQAP>pQBBTAI-PA-PPL+P<BVPAL+T+P>PL+PBLPBP<DLLLT+P' );
-let r = poohbear("++LQTT>W++LQTTWTNEP<NE");
-r
+// let r = poohbear( 'LQTcQAP>pQBBTAI-PA-PPL+P<BVPAL+T+P>PL+PBLPBP<DLLLT+P' );
+// let r = poohbear("++LQTT>W++LQTTWTNEP<NE");
+//let res = poohbear('+LTQIIWP+E');
+let res = poohbear('LILcABNBpYDYYYYLLL+P-+W-EQNW-ELLQUTTTT+P');
+res
+console.log( res === "2'0A" )
 
 //poohbear('+LTQII>+WN<P>+E')
 
+/*
 let s = "..WezWabEaWgogogoEzE--";
+
 let o = s.match(/W|E/g).reduce( (r, e) => [...r,[e,s.indexOf(e,r.length?r[r.length-1][1]+1:0)]] , [])
-o
+//o
 
 let o2 = o.reduce( (r, e) => e[0]=='W' ? [...r,e] : (()=>{ let l=r.pop();l.push(e);return [...r,l]})() , [] )
-o2
+//o2
 
-let o3 = ( nx=0, stack=[] ) => s.match(/W|E/g).reduce( (r, e) => 
+let o3 = (( nx=0, stack=[] ) => s.match(/W|E/g).reduce( (r, e) => 
 {
   nx = s.indexOf(e,nx+1);  
-  (e=="W") ? stack.push(nx) : r.push( [stack.pop(),nx] );
+  if (e=="W") { stack.push(nx) } else { let p = stack.pop();r[p] = nx ; r['E'+nx] = p };
   return r;
 }
-, [])
-let z = o3()
-z
+, {}))()
+o3
 
 let test = o3 == [
   [ 2,19 ],
   [ 5,8 ],
   [ 10,17 ]
 ];
-test 
-
+//test 
+*/
 
