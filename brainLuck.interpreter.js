@@ -5,6 +5,7 @@
 const brainLuck = (
   code, 
   input,
+  irp = 0,
   memSize = 90000,
   cells = new Uint8Array( memSize ),
   result = '',
@@ -13,14 +14,14 @@ const brainLuck = (
   nx = 0,
   stack = []
 ) => {
-  let jumps = (code.match(/\[|\]/g) || []).reduce( (r, e) => {    
+  let jumps = (code.match(/\[|\]/g) || []).reduce( (r, e) => {
     nx = code.indexOf(e,nx+1);  
     if (e=="[") { stack.push(nx); } 
     else { let p = stack.pop(); r[p] = nx; r[']'+nx] = p; }
     return r;
-  }, {} );
+  }, {} );  
 
-  console.log(jumps);
+  const strToIn = String.fromCharCode;
 
   // "A+ C- R< T> q[ s] D. B,"
 
@@ -29,13 +30,20 @@ const brainLuck = (
     C() { cells[cp]-- },
     T() { cp++ },
     R() { cp-- },    
-    D() { result += String.fromCharCode(cells[cp]) },
-    B() { result += String.fromCharCode(cells[cp]) },    
-    s() { ip = jumps['E'+ip] - 1; },
-    q() { if(cells[cp] == 0){ ip = jumps[ip]; } },
+    D() { result += strToIn( cells[cp] ) },
+    B() { cells[cp] = input.charCodeAt(irp++) },    
+    s() { ip = jumps[']'+ip] - 1; },
+    q() { !(cells[cp]) && ( _=> ip = jumps[ip])() },
   }
 
-  for(;++ip<code.length;){ rules[code[ip]] && rules[code[ip]](); };
+  for(;++ip<code.length;){ 
+    console.log( code[ip] )        
+    console.log( result )
+    let com = strToIn(code.charCodeAt(ip)+22);
+    //console.log( com )
+    rules[com] && rules[com](); 
+  };
+  cells = null;
   return result;
 };
 
@@ -43,5 +51,5 @@ const test = (a,b) => a === b;
 
 let r1 = brainLuck(',+[-.,+]','Codewars'+String.fromCharCode(255))
 r1
-let t1 = test ( , 'Codewars' );
+let t1 = test ( r1 , 'Codewars' );
 t1
