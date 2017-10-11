@@ -2,7 +2,7 @@ https://www.codewars.com/kata/simple-assembler-interpreter
 
 // https://www.codewars.com/kata/simple-assembler-interpreter/train/javascript
 
-const simple_assembler = (
+simple_assembler = (
   code, 
   ip = -1,
   cpu = {}
@@ -41,6 +41,6 @@ const simple_assembler = (
 console.log(simple_assembler(['mov a 5','inc a','dec a','dec a','jnz a -1', 'inc a']) )  
   // {'a': 1}
 
-console.log(simple_assembler(['mov a -10','mov b a','inc a','dec b','jnz a -2'])) 
+console.log(simple_assembler(['mov a -10','mov b a','inc a','dec b','jnz a -2','inc b'])) 
   // {'a': 0, 'b': -20}
 
