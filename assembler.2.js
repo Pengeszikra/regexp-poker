@@ -1,5 +1,86 @@
 // https://www.codewars.com/kata/assembler-interpreter-part-ii
 
+
+assembler = (
+    source, 
+    ip = 0,
+    cpu = {},
+    comp = { e:false, g:false },  
+    stack = [],
+    out = ''
+  ) => {
+    const code = source.split(/\n/).map( e=>e.split(';')[0].trim()).filter(e=>e.length);
+    const regInt = ro => cpu[ro] !== undefined ? cpu[ro] : +ro;
+    const parseLine = line => {
+      let parts = line.split(/[,|\s]+/);
+      return { cmd:parts[0], reg:parts[1], extra:parts.length > 2 ? parts[2] : 0, line };
+    }     
+    const labels = code.reduce( (r,e,i) => {
+        if( e.slice(-1) === ":" ){ r[e.slice(0,e.length-1)] = i }
+        return r;
+    },{})
+    const jump = (label, go = true) => ip = go && labels[label] ? labels[label] : ip + 1;  
+    const process = {
+      mov(run){ cpu[run.reg] = regInt(run.extra); ip++ },
+      inc(run){ cpu[run.reg] ++; ip++ },
+      dec(run){ cpu[run.reg] --; ip++ },
+      add(run){ cpu[run.reg] += regInt(run.extra); ip++ },
+      sub(run){ cpu[run.reg] -= regInt(run.extra); ip++ },
+      mul(run){ cpu[run.reg] *= regInt(run.extra); ip++ },
+      div(run){ cpu[run.reg] /= regInt(run.extra); ip++ },
+      jmp(run){ ip = jump(run.reg) },
+      cmp(run){ let dif = regInt(run.reg) - regInt(run.extra); comp.g = dif > 0; comp.e = dif === 0; },
+      jne(run){ jump(run.reg, !comp.e) },
+      je(run){ jump(run.reg, comp.e) },
+      jge(run){ jump(run.reg, comp.e || comp.g) },
+      jg(run){ jump(run.reg, comp.g) },
+      jle(run){ jump(run.reg, !comp.g || comp.e) },
+      jl(run){ jump(run.reg, !comp.g) },
+      call(run){ stack.push(ip+1); jump(run.reg) },
+      ret(run){ let rtn = stack.pop(); ip = rtn || ip + 1 },
+      msg(run){ 
+                out += run.line.match(/(^msg\s+)|(["|']([^']*)["|'])|([^,|^\s])/g).slice(1)
+                    .map( e => cpu[e] ? cpu[e] : e.replace(/^'|^"|'$|"$/g,'') ).join('');
+                    ;ip ++
+              },
+      end(run){ out+=';end;'; ip = code.length },
+    }
+
+    let n = 0;        
+    for(;n++<30 && ip<code.length;){ 
+      let run = parseLine(code[ip]);             
+      ip            
+      if (process[run.cmd]){ process[run.cmd]( run ) } else { ip++ };      
+    };
+    
+    labels
+    stack
+    cpu
+    out
+    
+    return cpu;
+  };
+
+  const Test = { assert_equals(a,b){ console.log( b, a===b );return a === b } }
+  
+  program = `
+  ; My first program
+  mov  a, 5
+  inc  a
+  call function
+  msg  '(5+1)/2 = ', a    ; output message
+  end
+  
+  function:
+      div  a, 2
+      ret
+  `
+  assembler(program)
+  
+
+  //Test.assert_equals(, '(5+1)/2 = 3')  
+
+/*
 assembler_interpreter = (
   source, 
   ip = 0,
@@ -72,6 +153,7 @@ assembler_interpreter = (
   
   return cpu;
 };
+
 
 const Test = { assert_equals(a,b){ console.log( b, a===b );return a === b } }
 
@@ -259,52 +341,4 @@ print:
 
 Test.assert_equals(assembler_interpreter(program_power), '2^10 = 1024')
 
-assembler = (
-    source, 
-    ip = 0,
-    cpu = {},
-    labels = {},
-    comp = { e:false, g:false },  
-    stack = [],
-    out = ''
-  ) => {
-    const code = source.split(/\n/).map( e=>e.split(';')[0].trim()).filter(e=>e.length);
-    const regInt = ro => cpu[ro] !== undefined ? cpu[ro] : +ro;
-    const parseLine = line => {
-      let parts = line.split(" ");
-      return { cmd:parts[0], reg:parts[1], extra:parts.length > 2 ? parts[2] : 0, line };
-    }     
-    const labels = code.reduce( (r,e,i) => {
-        if( e.slice(-1) === ":" ){ r[e.slice(0,e.length-1)] = i }
-        return r;
-    },{})
-    const jump = (label, go = true) => ip = go && labels[label] ? labels[label] : ip + 1;  
-    const process = {
-      mov(run){ cpu[run.reg] = regInt(run.extra); ip++ },
-      inc(run){ cpu[run.reg] ++; ip++ },
-      dec(run){ cpu[run.reg] --; ip++ },
-      add(run){ cpu[run.reg] += regInt(run.extra); ip++ },
-      sub(run){ cpu[run.reg] -= regInt(run.extra); ip++ },
-      mul(run){ cpu[run.reg] *= regInt(run.extra); ip++ },
-      div(run){ cpu[run.reg] /= regInt(run.extra); ip++ },
-      jmp(run){ ip = jump(run.reg) },
-      cmp(run){ let dif = regInt(run.reg) - regInt(run.extra); comp.g = dif > 0; comp.e = dif === 0; },
-      jne(run){ jump(run.reg, !comp.e) },
-      je(run){ jump(run.reg, comp.e) },
-      jge(run){ jump(run.reg, comp.e || comp.g) },
-      jg(run){ jump(run.reg, comp.g) },
-      jle(run){ jump(run.reg, !comp.g || comp.e) },
-      jl(run){ jump(run.reg, !comp.g) },
-      call(run){ stack.push(ip+1); jump(run.reg) },
-      ret(run){ let retHere = stack.pop(); ip = retHere || ip + 1 },
-      msg(run){ run.line.split(',').reduce( (r,e) => r += e , '' ) },
-      end(run){ ip = code.length },
-    }
-
-    for(;ip<code.length;){ 
-      let run = parseLine(code[ip]);     
-      if (process[run.cmd]){ process[run.cmd]( run ) } else { ip++ };
-    };
-    
-    return cpu;
-  };
+*/
