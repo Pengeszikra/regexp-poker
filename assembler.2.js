@@ -122,7 +122,7 @@ assembler = (
       jmp   init
   
   print:
-      msg   'gcd(', a, ', ', b, ') = ', c
+      msg   'gcd(',a, ', ', b, ') = ', c
       ret
   `
   
