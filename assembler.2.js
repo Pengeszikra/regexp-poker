@@ -393,3 +393,6 @@ print:
 Test.assert_equals(assembler_interpreter(program_power), '2^10 = 1024')
 
 */
+
+
+/// tk = s => '["'+s.replace(/(\(([^\(]*?)\))/g,'",["$2"],"')+'"]'
