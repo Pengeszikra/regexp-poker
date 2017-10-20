@@ -22,42 +22,18 @@ const nestSearch = (
   return {justLeftOver, isOpen, begin, end, pos, lvl }
 };
 
-const nesting = arr => {  
-  let nest = nestSearch(arr)
-  if( nest.justLeftOver ){ return arr }  
-  do {
+const nesting = arr => {    
+  let nest = nestSearch(arr)    
+  if( nest.justLeftOver ){ return arr }      
+  if( !nest.isOpen ){ return null }
+  let first = nest.begin + 1
+  do {    
     nest = nestSearch(arr, nest.pos+1, nest.lvl )    
-  } while( nest.lvl >= 0 )  
-  return nest
+  } while( nest.lvl > 0 )
+  return arr.slice(first,nest.end)
 }
 
 const tokenizer = s => nesting( prepare(s) )
 
-console.log( tokenizer('sor') )
+console.log( tokenizer('saae(rwi(o, rw)eo)r--') )
 //console.log( JSON.stringify(found(sor)) )
-console.log( JSON.stringify(tokenizer('(())()')) )
-//console.log( found(found(sor)[1][0]) )
-console.log( '[`'+sor.replace(/\(/g, '`,[`' ).replace(/\)/g, '`],`' )+'`]' )
-
-const next = s => { let poz = s.search(/\(|\)/); return poz< 0 ? null : {poz,st:s[poz] == '('} }
-const foundEr = s => {  
-  let lvl = 0  
-  let po = 0
-  let deep = first = next(s);
-  do {
-    deep = next(s.slice(po));
-    if(!deep){ return s }
-    lvl += deep.st ? +1 : -1
-    po += deep.poz + 1     
-  } while( lvl > 0 )   
-  return lvl<0 
-    ? s
-    : [
-        s.slice(0,first.poz),
-        [foundEr(s.slice(first.poz+1,po-1))],
-        foundEr(s.slice(po))
-      ]
-}
-
-
-// console.log( next(sor) )
