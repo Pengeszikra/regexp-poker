@@ -29,19 +29,15 @@ const hand = (
       'straight-flush'
     ]
     let type  = typeNames[0]
-    let ranks = cards.map( e => e.charAt(0) ).sort( (a,b) => a>b ? -1:1 )
-
-    let colors = cards.reduce( (r,e,i) => {
-      let card = [...e]
-      r[card[1]] = r[card[1]] ? [...r[card[1]],card[0]] : [card[0]]
+    let ranks = []
+    let matrix = cards.reduce( (r,e) => {
+      let {f,c} = {f:e.charAt(0),c:e.charAt(1)}      
+      r[f] = r[f] ? [...r[f],e] : [e]
+      r[c] = r[c] ? [...r[c],e] : [e]
       return r
-    } , {} )
-    let result = [...'♣♠♥♦'].reduce( (r,e) => {
-      let cl = colors[e] ? colors[e].length : 0
-      let ty = cl ? colors[e].reduce( (rr,ee) => 0 , [] ) : 0
-      return cl ? [...r,e+cl] : [...r]
-    }, [])
-    return {m:result, type, ranks}
+    }, {} )    
+    let m = matrix;
+    return {m, type, ranks}
   },
   {type, ranks, m} = texas( cards )
 ) => ({m, type, ranks})
