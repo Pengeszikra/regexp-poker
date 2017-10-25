@@ -34,19 +34,22 @@ const hand = (
       r.suitMax = r[c].length > r.suitMax.length ? r[c] : r.suitMax
       if( r[f].length > r.runMax[0].length ){ r.runMax.unshift(r[f]) }
       return r
-    }, {suitMax:[],runMax:[[]]} ) 
+    }, {suitMax:[],runMax:[[]]} )
 
     if( matrix.runMax[0].length === 2 ){ type = matrix.runMax[1].length == 2 ? 2 : 1 }
     if( matrix.runMax[0].length === 3 ){ type = matrix.runMax[1].length >= 2 ? 6 : 3 }
     if( matrix.runMax[0].length === 4 ){ type = 7 }   
     if( matrix.suitMax.length >= 4 ){ type = isStraight( matrix.suitMax ) ? 8 : 5 }
     else if( isStraight( matrix ) ){ type = 4 }
+
+    ranks = matrix.suitMax.sort( (a, b) => a.cw < b.cw ? 1:-1 ).map( c => c.card.charAt(0) )
+
     let m = matrix 
     type = typeNames[type]
     return {m, type, ranks}
   },
   {type, ranks, m} = texas( cards )
-) => ({ ranks, type})
+) => ({ type, ranks})
 
 console.log(hand(['K♠','A♦'],['J♣','Q♥','9♥','2♥','3♦']))
 console.log(hand(['K♠','Q♦'],['J♣','Q♥','9♥','2♥','3♦']))
