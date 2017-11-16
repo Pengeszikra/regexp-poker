@@ -7,6 +7,19 @@ console.log(isAtom.test("He"))
 console.log(isMolecule.test("K4[ON(SO3)2]2"))
 console.log("As2{Be4C5[BCo3(CO2)3]2}4Cu5".match(parseFormula))
 
+
+console.log("As2{Be4C5[BCo3(CO2)3]2}4Cu5".match(/([A-Z][a-z]*\d*)|(\W\d*)/g))
+
+
+let pf = molecula => molecula.match(/([A-Z][a-z]*\d*)|(\W\d*)/g).reduce( (r,e,i)=>{   
+let bont = e.match( /([A-Z][a-z]*)(\d*)|(|\W)(\d*)/ )
+  bont[2] = bont[2] ? bont[2] : 1
+  r[bont[1]] = r[bont[1]] ? r[bont[1]] + parseInt(bont[2]) : parseInt(bont[2]) ; 
+  return r
+} , {} )
+
+console.log( pf("B2H6") ) 
+
 //{[Co(NH3)4(OH)2]3Co}(SO4)3 Should parse hexol sulphate: {[Co(NH3)4(OH)2]3Co}(SO4)3
 
 /*
@@ -24,3 +37,6 @@ As2{Be4C5[BCo3(CO2)3]2}4Cu5 - Should parse really weird molecule: As2{Be4C5[BCo3
 */
 
 let parseMolecule = formula => 1
+
+
+8930945057
