@@ -1,4 +1,4 @@
-const assertEquals = (a,b, stirngify = JSON.stringify ) => stirngify(a) === stirngify(b)
+const assertEquals = (a,b, stirngify = JSON.stringify ) => stirngify(a) === stirngify(b);
 
 test = _ => [
     assertEquals({type:'nothing', ranks:['A','K','Q','J','9']},hand(['K♠','A♦'],['J♣','Q♥','9♥','2♥','3♦'])),
@@ -20,14 +20,16 @@ const hand = (
   cards = holeCards.concat(communityCards),
   texas = cards => {
     const typeNames = ['nothing','pair','two pair','three-of-a-kind','straight','flush','full house','four-of-a-kind','straight-flush']
-    const runOrder = '23456789JQKA'
+    const runOrder = '2345678910JQKA'
     //const suit = {'♣':'C','♦':'D','♥':'H','♠':'S'}
     let type  = 0
     let ranks = []
-    const isStraight = hand => false
-    
-    const matrix = cards.reduce( (r,card) => {
-      let {f,c} = {f:card.charAt(0),c:card.charAt(1)} 
+    const isStraight = cards => cards
+        
+    const matrix = cards.reduce( (r,card) => {            
+      let parse = card.match(/(2|3|4|5|6|7|8|9|0|J|Q|K|A)+(♠|♦|♣|♥)/);   
+      let f = parse[1];
+      let c = parse[2];
       let cw = runOrder.indexOf(f)     
       r[f] = r[f] ? [...r[f],{card,cw}] : [{card,cw}]
       r[c] = r[c] ? [...r[c],{card,cw}] : [{card,cw}]
@@ -36,12 +38,21 @@ const hand = (
       return r
     }, {suitMax:[],runMax:[[]]} )
 
+    matrix
+
+    const matrixRank = [...Object.keys(matrix)]
+      .filter(key => runOrder.indexOf(key) !== -1)
+      .map( key => matrix[key][0])
+      .sort( (a,b) => a.cw<b.cw?1:-1 );
+
+    //if( isStraight( [...Object.keys(matrix)].filter(key => runOrder.indexOf(key) !== -1).map( key => matrix[key]) ) ){ type = 4 }
+    let isSt = isStraight( matrixRank )
+    isSt
+    if( matrix.suitMax.length >= 4 ){ type = isStraight( matrix.suitMax ) ? 8 : 5 }
     if( matrix.runMax[0].length === 2 ){ type = matrix.runMax[1].length == 2 ? 2 : 1 }
     if( matrix.runMax[0].length === 3 ){ type = matrix.runMax[1].length >= 2 ? 6 : 3 }
     if( matrix.runMax[0].length === 4 ){ type = 7 }   
-    if( matrix.suitMax.length >= 4 ){ type = isStraight( matrix.suitMax ) ? 8 : 5 }
-    else if( isStraight( matrix ) ){ type = 4 }
-
+    
     ranks = matrix.suitMax.sort( (a, b) => a.cw < b.cw ? 1:-1 ).map( c => c.card.charAt(0) )
 
     let m = matrix 
@@ -51,6 +62,9 @@ const hand = (
   {type, ranks, m} = texas( cards )
 ) => ({ type, ranks})
 
+console.log(hand(['A♠','K♦'],['J♥','5♥','10♥','Q♥','3♥']))
+
+/*
 console.log(hand(['K♠','A♦'],['J♣','Q♥','9♥','2♥','3♦']))
 console.log(hand(['K♠','Q♦'],['J♣','Q♥','9♥','2♥','3♦']))
 console.log(hand(['K♠','J♦'],['J♣','K♥','9♥','2♥','3♦']))
@@ -61,3 +75,5 @@ console.log(hand(['A♠','A♦'],['K♣','K♥','A♥','Q♥','3♦']))
 console.log(hand(['2♠','3♦'],['2♣','2♥','3♠','3♥','2♦']))
 console.log(hand(['8♠','6♠'],['7♠','5♠','9♠','J♠','10♠']))
 console.log(test())
+*/
+
