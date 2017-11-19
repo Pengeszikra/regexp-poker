@@ -24,8 +24,7 @@ const hand = (
     //const suit = {'♣':'C','♦':'D','♥':'H','♠':'S'}
     let type  = 0
     let ranks = []
-    const isStraight = cards => cards
-        
+
     const matrix = cards.reduce( (r,card) => {            
       let parse = card.match(/(2|3|4|5|6|7|8|9|0|J|Q|K|A)+(♠|♦|♣|♥)/);   
       let f = parse[1];
@@ -45,8 +44,13 @@ const hand = (
       .map( key => matrix[key][0])
       .sort( (a,b) => a.cw<b.cw?1:-1 );
 
+    matrixRank      
+
+    const straightFirst = ( cards, great = cards.find( (e,i,a) => i>3 && a[i-3].cw == a[i-2].cw+1 && a[i-2].cw == a[i-1].cw+1 && a[i-1].cw == a[i].cw+1 ) ) => great ? cards.indexOf(great)-3 : false ; 
+    // cc.filter( (e,i,a,l=a.length-2,f=a[0]) => ( i<l && a[i].cw == a[i+1].cw+1 ) || ( i>0 && a[i-1].cw == a[i].cw+1 ) )
+
     //if( isStraight( [...Object.keys(matrix)].filter(key => runOrder.indexOf(key) !== -1).map( key => matrix[key]) ) ){ type = 4 }
-    let isSt = isStraight( matrixRank )
+    let isSt = straightFirst( matrixRank )
     isSt
     if( matrix.suitMax.length >= 4 ){ type = isStraight( matrix.suitMax ) ? 8 : 5 }
     if( matrix.runMax[0].length === 2 ){ type = matrix.runMax[1].length == 2 ? 2 : 1 }
@@ -63,6 +67,14 @@ const hand = (
 ) => ({ type, ranks})
 
 console.log(hand(['A♠','K♦'],['J♥','5♥','10♥','Q♥','3♥']))
+
+
+let a = ([...Array(100)].map(_=>~~(Math.random()*100))).sort((a,b)=>a<b?1:-1);
+let b = a.find( (e,i,a) => a[i-3] == a[i-2]+1 && a[i-2] == a[i-1]+1 && a[i-1] == a[i]+1 ); 
+console.log(
+  b ? a.splice(a.indexOf(b)-3,4) : b
+)
+
 
 /*
 console.log(hand(['K♠','A♦'],['J♣','Q♥','9♥','2♥','3♦']))
