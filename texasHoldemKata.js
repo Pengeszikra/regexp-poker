@@ -81,7 +81,9 @@ const hand = (
     if ( rml0 === 2 ){ type = rml1 == 2 ? 2 : 1 }
     if ( rml0 === 3 ){ type = rml1 >= 2 ? 6 : 3 }
     if ( rml0 === 4 ){ type = 7 }   
-    
+
+    // [...Object.keys(matrix)].filter(key = )
+
     ranks = matrix.suitMax.sort( (a, b) => a.cw < b.cw ? 1:-1 ).map( c => c.card.charAt(0) )
 
     let m = matrix 
