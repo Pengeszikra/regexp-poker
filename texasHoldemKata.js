@@ -46,29 +46,41 @@ const hand = (
       .sort( (a,b) => a.cw<b.cw?1:-1 );
 
     //matrixRank      
+    
+    const straightFirst = cards =>
+        cards
+          .sort( (a,b) => a.cw<b.cw?1:-1 )
+          .map( e => e.cw )
+          .findIndex( (e,i,arr,[f,g,h,j]=arr.slice(i,i+4)) => f-g===1 &&  g-h===1 && h-j===1 ) /// destroying search
+          // .map( (e,i,arr,[{cw:f},{cw:g},{cw:h},{cw:j}]=arr.slice(i,i+4)) => f  )/// destroying search
 
-    const straightFirst = ( cards, great = 
-      cards
-        .sort( (a,b) => a.cw<b.cw?1:-1 )
-        .find( (e,i,a) => i>3 && a[i-3].cw == a[i-2].cw+1 && a[i-2].cw == a[i-1].cw+1 && a[i-1].cw == a[i].cw+1 ) 
-    ) => great ? cards.indexOf(great)-3 : false ; 
+    // bad test >> [1,[7],6,5,["4"]].findIndex( (e,i,a,[f,g,h,j]=a.slice(i,i+4)) => f-g==1 &&  g-h==1 && h-j==1 ) !!! 
+    //.find( (e,i,a) => i>3 && a[i-3].cw == a[i-2].cw+1 && a[i-2].cw == a[i-1].cw+1 && a[i-1].cw == a[i].cw+1 )  // cards.indexOf(great)-3 
+    
     // cc.filter( (e,i,a,l=a.length-2,f=a[0]) => ( i<l && a[i].cw == a[i+1].cw+1 ) || ( i>0 && a[i-1].cw == a[i].cw+1 ) )
 
     //if( isStraight( [...Object.keys(matrix)].filter(key => runOrder.indexOf(key) !== -1).map( key => matrix[key]) ) ){ type = 4 }
-    let suSt = false;
     //let rankSort = matrixRank.sort( (a,b) => a.cw<b.cw?1:-1 )
     //rankSort
-    let isSt  = straightFirst( matrixRank )
-    //isSt  
-    if(isSt){ type = 4 }
-    if( matrix.suitMax.length >= 4 ){ 
+    let suSt = -1;
+    let isSt  = straightFirst( matrixRank )    
+    
+
+    if (isSt !== -1){ type = 4 }
+    if ( matrix.suitMax.length >= 4 ){ 
        // let suSort = matrix.suitMax.sort( (a,b) => a.cw<b.cw?1:-1 );
        suSt = straightFirst( matrix.suitMax ) 
-       type =  suSt ? 8 : 5;      
+       type =  suSt !== -1  ? 8 : 5;      
     }
-    if( matrix.runMax[0].length === 2 ){ type = matrix.runMax[1].length == 2 ? 2 : 1 }
-    if( matrix.runMax[0].length === 3 ){ type = matrix.runMax[1].length >= 2 ? 6 : 3 }
-    if( matrix.runMax[0].length === 4 ){ type = 7 }   
+
+    let [{length:rml0},{length:rml1}] = matrix.runMax // more destructing trick
+
+    rml0
+    rml1
+
+    if ( rml0 === 2 ){ type = rml1 == 2 ? 2 : 1 }
+    if ( rml0 === 3 ){ type = rml1 >= 2 ? 6 : 3 }
+    if ( rml0 === 4 ){ type = 7 }   
     
     ranks = matrix.suitMax.sort( (a, b) => a.cw < b.cw ? 1:-1 ).map( c => c.card.charAt(0) )
 
@@ -81,14 +93,11 @@ const hand = (
 
 //console.log(hand(['A♠','K♦'],['J♥','5♥','10♥','Q♥','3♥']))
 
-
 let a = ([...Array(40)].map(_=>~~(Math.random()*100))).sort((a,b)=>a<b?1:-1);
 let b = a.find( (e,i,a) => a[i-3] == a[i-2]+1 && a[i-2] == a[i-1]+1 && a[i-1] == a[i]+1 ); 
 console.log(
   b ? a.splice(a.indexOf(b)-3,4) : b
 )
-
-
 
 console.log(hand(['K♠','A♦'],['J♣','Q♥','9♥','2♥','3♦']))
 console.log(hand(['K♠','Q♦'],['J♣','Q♥','9♥','2♥','3♦']))
