@@ -19,7 +19,6 @@ const hand = (
   texas = cards => {
     const typeNames = ['nothing','pair','two pair','three-of-a-kind','straight','flush','full house','four-of-a-kind','straight-flush']
     const runOrder = '234567890JQKA'
-    //const suit = {'♣':'C','♦':'D','♥':'H','♠':'S'}
     let type  = 0
 
     const matrix = cards.reduce( (r,card) => {            
@@ -33,6 +32,8 @@ const hand = (
       if( r[f].length >= r.runMax[0].length ){ r.runMax.unshift(r[f]) }
       return r
     }, {suitMax:[],runMax:[[]]} )
+
+    matrix
 
     const matrixRank = [...Object.keys(matrix)]
       .filter(key => runOrder.indexOf(key) !== -1)
@@ -61,22 +62,27 @@ const hand = (
       rankedExtra([...matrixRank.slice(isSt,isSt+4)])
     }
 
-    let [{length:rml0},{length:rml1}] = matrix.runMax // more deconstructing tricks
+    let [{length:rml0},{length:rml1}] = matrix.runMax;
 
+    
     if ( rml0 === 2 ){ type = rml1 == 2 ? 2 : 1 }
     if ( rml0 === 3 ){ type = rml1 >= 2 ? 6 : 3 }
     if ( rml0 === 4 ){ type = 7 }   
     if( type === 2 || type === 6 ){ rankedExtra([...matrix.runMax[0],...matrix.runMax[1]]); }
     if( type === 1 || type === 3 || type === 7 ){ rankedExtra(matrix.runMax[0]); }
 
+    rml0
+    rml1
+    type
+
     let ranks = [...matrixRank, ...ranked]
       .sort( (a,b) => a.cw<b.cw?1:-1 )
       .map( card => Object.assign({},card,{card:card.card.slice(0,card.card.length-1)}) )
-      .reduce( (r,e) => [...r, e.card] , [] )
-      .filter( (e,i,arr) => arr.indexOf(e) === i )
+      .map( e => e.card )
+      .filter( (e,i,arr) => arr.indexOf(e) === i );
    
-    ranks = ranks.slice(0,[5,4,3,3,5,5,2,2,5,5][type])     
-    return {type:typeNames[type], ranks}
+    ranks = ranks.slice(0,[5,4,3,3,5,5,2,2,5,5][type]);     
+    return {type:typeNames[type], ranks};
   },
   {type, ranks} = texas( cards )
 ) => ({ type, ranks});
@@ -90,4 +96,4 @@ console.log(hand(['A♠','K♦'],['J♥','5♥','10♥','Q♥','3♥']))
 console.log(hand(['A♠','A♦'],['K♣','K♥','A♥','Q♥','3♦']))
 console.log(hand(['2♠','3♦'],['2♣','2♥','3♠','3♥','2♦']))
 console.log(hand(['8♠','6♠'],['7♠','5♠','9♠','J♠','10♠']))
-console.log(test())
+// console.log(test())
