@@ -64,14 +64,24 @@ const hand = (
     //rankSort
     let suSt = -1;
     let isSt  = straightFirst( matrixRank )    
-    
 
-    if (isSt !== -1){ type = 4 }
+    let ranked = []
+    const rankValue = (card, rank = type * 100 + card.cw ) => Object.assign({}, card, {rank});    
+    const rankedExtra = set => set.map( card => ranked.push(rankValue(card)) );
+    
     if ( matrix.suitMax.length >= 4 ){ 
        // let suSort = matrix.suitMax.sort( (a,b) => a.cw<b.cw?1:-1 );
        suSt = straightFirst( matrix.suitMax ) 
-       type =  suSt !== -1  ? 8 : 5;      
+       type =  suSt !== -1  ? 8 : 5;             
+       //ranked.push([...matrix.suitMax.slice(suSt,suSt+4).map(card => rankValue(card))]);
+       rankedExtra([...matrix.suitMax.slice(suSt,suSt+4)]);
+    } else if (isSt !== -1){ 
+      type = 4 
+      //ranked.push([...matrixRank.slice(isSt,isSt+4).map(card => rankValue(card))]);
+      rankedExtra([...matrixRank.slice(isSt,isSt+4)])
     }
+
+    
 
     let [{length:rml0},{length:rml1}] = matrix.runMax // more destructing trick
 
@@ -82,9 +92,28 @@ const hand = (
     if ( rml0 === 3 ){ type = rml1 >= 2 ? 6 : 3 }
     if ( rml0 === 4 ){ type = 7 }   
 
+    if( type === 2 || type === 6 ){
+      //ranked.push( [...matrix.runMax[0],...matrix.runMax[1]].map(card => rankValue(card)));
+      rankedExtra([...matrix.runMax[0],...matrix.runMax[1]]);
+    }
+
+    if( type === 1 || type === 3 || type === 7 ){
+      ranked.push( [...matrix.runMax[0]].map(card => rankValue(card)));
+      rankedExtra(matrix.runMax[0])
+    }
+
+    ranked
+    
+
     // [...Object.keys(matrix)].filter(key = )
 
     ranks = matrix.suitMax.sort( (a, b) => a.cw < b.cw ? 1:-1 ).map( c => c.card.charAt(0) )
+
+    let rrr = [...Object.keys(matrix)]
+      .filter(key => runOrder.indexOf(key) !== -1)
+      .map( key => matrix[key])
+      //.sort( (a,b) => a.cw<b.cw?1:-1 );
+  
 
     let m = matrix 
     type = typeNames[type]
