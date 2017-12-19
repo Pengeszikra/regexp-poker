@@ -7,21 +7,46 @@ const go = (height, width = height) => {
 
   const turnColor = _ => turn ? 'black' : 'white' ;
   const turnFigure = _ => turn ? 'x' : 'o' ;
+  const same = figure => figure ? 'x' : 'o' ;
+  const turnOver = _ => turn = !turn;
   const size = _ => ({height, width});
   const pass = p => {};
-  const position = (pos, parse = /(\d+)([A-Z])/.exec(pos)) => parse ? [ + parse[1], parse[2].charCodeAt(0) - ACODE] : [-1,-1];
-  //const inside = (xy, [x,y] = xy) => x >=0 && x < width && y >= 0 && y < height;
-  const inside = (xy, [x,y] = xy) => (x ^ x - width) < 0 && (y ^ y - height) < 0;
-  const getPosition = p => {};
+  const position = (pos, parse = /(\d+)([A-Z])/.exec(pos)) => parse ? [ + parse[1] - 1, parse[2].charCodeAt(0) - ACODE] : [-1,-1];
+  const xyToPos = (x, y) => (x+1) + String.fromCharCode(ACODE + y);
+  const inside = (x, y) => (x ^ x - width) < 0 && (y ^ y - height) < 0;
+  const insideXY = (xy, [x,y] = xy) => inside(x, y);
+  const getBoard = (x, y) => inside(x, y) ? board[x+y*width] : false;
+  const getBoardXY = (xy, [x,y] = xy) => getBoard(x, y);
+  const getPosition = (pos, [x, y] = position(pos)) => getBoard(x, y);
+  const setBoard = (x, y, stone) => {
+    board[x+y*width] = stone;
+    return [x,y,stone];
+  };
+  const throwError = err => {throw new Error(err)};
+  const livesXY = (x, y) => [[x,y+1],[x+1,y],[x,y-1],[x-1,y]].filter( pos => inside(pos[0],pos[1]) )
+  const legalMove = (x, y, figure, place = getBoard(x,y) ) => {
+    let lives = livesXY(x,y).filter( xy => [same(figure),'.'].indexOf(getBoardXY(xy)) !== -1);
+    return place === '.' && lives.length > 0;
+  };
+  const capture = (x, y, figure) => {
+    // return captured positions
+  };
   const placeStone = pos => {
-      
+    let [x,y] = position(pos);
+    if(legalMove(x,y,turn)) {
+      moves.push(
+        setBoard(x,y,turnFigure())
+      );
+      return turnOver();
+    } 
+    throwError('illegal move: ' + pos );
   };
   const handicapStones = p => {};
   const move = (...positions) => positions.map(pos => placeStone(pos));
   const rollback = p => {};
-  const reset = p => [...Array(height*width)].map( _ => '.');
-
-  const board2D = _ => 111;
+  const reset = p => (height-3 ^ height-26) < 0 || (width-3 ^ width-26 ) < 0 ? [...Array(height*width)].map( _ => '.') : throwError('illegal board size');
+  const chunker = chunk => arr => [...Array(arr.length / chunk |0)].map( (_, i) => arr.slice(i*chunk,(i+1)*chunk) )
+  const board2D = _ => chunker(width)(board);
 
   const log = _ => board.join('').split();
 
@@ -38,16 +63,12 @@ const go = (height, width = height) => {
 
 function Go(x, y){ return go(x, y); }
 
-let game = new Go(5);
+let game = new Go(9);
 console.log(game.size)
 console.log(game.board)
 console.log(game.turn)
-game.move("7A")
+game.move("4D","3D","4H","5D","3H","4C","5B","4E")
+console.log(game.getPosition("4D"))
 console.log(game.board)
 console.log(game.inside([1,3]))
 console.log(game.log)
-
-const chunker = chunk => arr => [...Array(arr.length / chunk |0)].map( (_, i) => arr.slice(i*chunk,(i+1)*chunk) )
-console.log(
-  JSON.stringify( chunker(3)([...'123456789ABCD']) )
-)
