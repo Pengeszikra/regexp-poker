@@ -5,6 +5,7 @@ const go = (height, width = height) => {
   let board = [];
   const ACODE = "A".charCodeAt(0);
 
+  const funXY = fun => (xy, [x,y] = xy) => fun(x, y);
   const turnColor = _ => turn ? 'black' : 'white' ;
   const turnFigure = _ => turn ? 'x' : 'o' ;
   const same = figure => figure ? 'x' : 'o' ;
@@ -14,23 +15,25 @@ const go = (height, width = height) => {
   const position = (pos, parse = /(\d+)([A-Z])/.exec(pos)) => parse ? [ + parse[1] - 1, parse[2].charCodeAt(0) - ACODE] : [-1,-1];
   const xyToPos = (x, y) => (x+1) + String.fromCharCode(ACODE + y);
   const inside = (x, y) => (x ^ x - width) < 0 && (y ^ y - height) < 0;
-  const insideXY = (xy, [x,y] = xy) => inside(x, y);
+  const insideXY = funXY(inside);
   const getBoard = (x, y) => inside(x, y) ? board[x+y*width] : false;
-  const getBoardXY = (xy, [x,y] = xy) => getBoard(x, y);
+  const getBoardXY = funXY(getBoard);
   const getPosition = (pos, [x, y] = position(pos)) => getBoard(x, y);
   const setBoard = (x, y, stone) => {
     board[x+y*width] = stone;
     return [x,y,stone];
   };
   const throwError = err => {throw new Error(err)};
-  const livesXY = (x, y) => [[x,y+1],[x+1,y],[x,y-1],[x-1,y]].filter( pos => inside(pos[0],pos[1]) )
+  const livesLeft = (x, y) => [[x,y+1],[x+1,y],[x,y-1],[x-1,y]].filter( pos => inside(pos[0],pos[1]) )
   const legalMove = (x, y, figure, place = getBoard(x,y) ) => {
-    let lives = livesXY(x,y).filter( xy => [same(figure),'.'].indexOf(getBoardXY(xy)) !== -1);
+    let lives = livesLeft(x,y).filter( xy => [same(figure),'.'].indexOf(getBoardXY(xy)) !== -1);
+    lives
     return place === '.' && lives.length > 0;
   };
   const capture = (x, y, figure) => {
-    // return captured positions
+    let lives = livesLeft(x,y).filter( xy => getBoardXY(xy) === same(!figure) )
   };
+  const captureXY = funXY(capture);
   const placeStone = pos => {
     let [x,y] = position(pos);
     if(legalMove(x,y,turn)) {
