@@ -8,23 +8,23 @@ const go = (height, width = height) => {
 
   // boardObject    
 
-  const xyToPoz = (x, y) => String.fromCharCode(x + ACODE) + (y + 1);
-  const pozToXy = poz => [poz[0].codePointAt(0) - ACODE, +poz.slice(1) - 1];
-  const liberty = (poz, xCode = poz[0].codePointAt(0), y = +poz.slice(1)) => [
-    poz[0] + (y - 1),
-    String.fromCharCode(xCode + 1) +  y,
-    poz[0] + (y + 1),
-    String.fromCharCode(xCode - 1) + y
+  const xyToPoz = (x, y) => (x + 1) + String.fromCharCode(y + ACODE);
+  const pozToXy = poz => [+poz.slice(0,-1) - 1, poz.slice(-1).codePointAt(0) - ACODE];
+  const liberty = (poz, x = +poz.slice(0,-1), yCode = poz.slice(-1).codePointAt(0) ) => [
+    x + String.fromCharCode(yCode - 1),
+    (x-1) + poz.slice(-1),
+    x + String.fromCharCode(yCode + 1),
+    (x+1) + poz.slice(-1),
   ];
   const boardObject = () => 
     [...Array(width)].reduce( (r,_,i) => {
-      [...Array(height)].map( (_,j) => r[String.fromCharCode(ACODE+j)+(i+1)] = '.' )
+      [...Array(height)].map( (_,j) => r[(i+1) + String.fromCharCode(ACODE+j)] = '.' )
     return r;
     }, {}
   ); 
   const to2dBoard = _ =>     
-    [...Array(width)].map( (_,y) => 
-      [...Array(height)].map( (_,x) => oboard[xyToPoz(x,y)] ) 
+    [...Array(width)].map( (_,x) => 
+      [...Array(height)].map( (_,y) => oboard[xyToPoz(x,y)] ) 
   );
 
   const funXY = fun => (xy, [x,y] = xy) => fun(x, y);
@@ -44,14 +44,11 @@ const go = (height, width = height) => {
   };
   const throwError = err => {throw new Error(err)};
   const livesLeft = (x, y) => [[x,y+1],[x+1,y],[x,y-1],[x-1,y]].filter( pos => inside(pos[0],pos[1]) );
-  const getShape = (x, y, figure, place = getBoard(x, y)) => { 
-    let shapePositions = livesLeft(x, y).filter(xy => getBoardXY(xy) === figure );
-    return getBoard(x, y) === figure ? [[x, y], ...shapePositions] : false;
-  };
   const legalMove = (poz, figure, place = getPosition(poz) ) => {
     console.log(poz)  // !number first!
     let lives = liberty(poz)
     console.log( lives )
+    console.log( place )
     return place === '.' && lives.length > 0;
   };
   const capture = (x, y, figure) => {
@@ -59,6 +56,7 @@ const go = (height, width = height) => {
   };
   const captureXY = funXY(capture);
   const placeStone = poz => {
+    console.log(legalMove(poz, turn))
     if (legalMove(poz, turn)) {
       historyOfMoves.push(
         setBoard(poz, turnFigure())
@@ -88,7 +86,6 @@ const go = (height, width = height) => {
       get size(){ return size() },
       pass, getPosition, handicapStones, move, rollback, pass, reset, inside, 
       get log(){ return log() },
-      getShape,
       oboard,
     });
   }
@@ -103,10 +100,9 @@ let game = new Go(9);
 console.log(game.size)
 console.log(game.board)
 console.log(game.turn)
+console.log(game.oboard)
 game.move("4D","3D","4H","5D","3H","4C","5B","4E")
 console.log(game.getPosition("4D"))
 console.log(game.board)
 console.log(game.inside([1,3]))
 console.log(game.log)
-console.log(game.getShape(3,2,'o'))
-console.log(game.oboard)
