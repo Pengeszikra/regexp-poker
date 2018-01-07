@@ -1,9 +1,31 @@
 const go = (height, width = height) => {
   
   let turn = true;
-  let moves = [];
+  let historyOfMoves = [];
   let board = [];
+  let oboard = {};
   const ACODE = "A".charCodeAt(0);
+
+  // boardObject    
+
+  const xyToPoz = (x, y) => String.fromCharCode(x + ACODE) + (y + 1);
+  const pozToXy = poz => [poz[0].codePointAt(0) - ACODE, +poz.slice(1) - 1];
+  const liberty = (poz, xCode = poz[0].codePointAt(0), y = +poz.slice(1)) => [
+    poz[0] + (y - 1),
+    String.fromCharCode(xCode + 1) +  y,
+    poz[0] + (y + 1),
+    String.fromCharCode(xCode - 1) + y
+  ];
+  const boardObject = () => 
+    [...Array(width)].reduce( (r,_,i) => {
+      [...Array(height)].map( (_,j) => r[String.fromCharCode(ACODE+j)+(i+1)] = '.' )
+    return r;
+    }, {}
+  ); 
+  const to2dBoard = _ =>     
+    [...Array(width)].map( (_,y) => 
+      [...Array(height)].map( (_,x) => oboard[xyToPoz(x,y)] ) 
+  );
 
   const funXY = fun => (xy, [x,y] = xy) => fun(x, y);
   const turnColor = () => turn ? 'black' : 'white' ;
@@ -13,12 +35,9 @@ const go = (height, width = height) => {
   const size = () => ({height, width});
   const pass = p => {};
   const position = (pos, parse = /(\d+)([A-Z])/.exec(pos)) => parse ? [ + parse[1] - 1, parse[2].charCodeAt(0) - ACODE] : [-1,-1];
-  const xyToPos = (x, y) => (x+1) + String.fromCharCode(ACODE + y);
   const inside = (x, y) => (x ^ x - width) < 0 && (y ^ y - height) < 0;
   const insideXY = funXY(inside);
-  const getBoard = (x, y) => inside(x, y) ? board[x + y * width] : false;
-  const getBoardXY = funXY(getBoard);
-  const getPosition = (pos, [x, y] = position(pos)) => getBoard(x, y);
+  const getPosition = poz => oboard[poz];
   const setBoard = (x, y, stone) => {
     board[x+y*width] = stone;
     return [x,y,stone];
@@ -29,8 +48,9 @@ const go = (height, width = height) => {
     let shapePositions = livesLeft(x, y).filter(xy => getBoardXY(xy) === figure );
     return getBoard(x, y) === figure ? [[x, y], ...shapePositions] : false;
   };
-  const legalMove = (x, y, figure, place = getBoard(x, y) ) => {
-    let lives = livesLeft(x, y).filter( xy => [same(figure),'.'].indexOf(getBoardXY(xy)) !== -1);
+  const legalMove = (poz, figure, place = getPosition(poz) ) => {
+    console.log(poz)  // !number first!
+    let lives = liberty(poz)
     console.log( lives )
     return place === '.' && lives.length > 0;
   };
@@ -38,53 +58,38 @@ const go = (height, width = height) => {
     let lives = livesLeft(x,y).filter( xy => getBoardXY(xy) === same(!figure) )
   };
   const captureXY = funXY(capture);
-  const placeStone = pos => {
-    let [x,y] = position(pos);
-    if (legalMove(x,y,turn)) {
-      moves.push(
-        setBoard(x,y,turnFigure())
+  const placeStone = poz => {
+    if (legalMove(poz, turn)) {
+      historyOfMoves.push(
+        setBoard(poz, turnFigure())
       );
       return turnOver();
     } 
-    throwError('illegal move: ' + pos );
+    throwError('illegal move: ' + poz );
   };
   const handicapStones = p => {};
   const move = (...positions) => positions.map(pos => placeStone(pos));
   const rollback = p => {};
   const reset = p => (height-3 ^ height-26) < 0 || (width-3 ^ width-26 ) < 0 ? [...Array(height*width)].map( _ => '.') : throwError('illegal board size');
+  const resetObjectBoard = _ => (height-3 ^ height-26) < 0 || (width-3 ^ width-26 ) < 0 ? boardObject() : throwError('illegal board size');
   const chunker = chunk => arr => [...Array(arr.length / chunk |0)].map( (_, i) => arr.slice(i*chunk,(i+1)*chunk) )
   const board2D = () => chunker(width)(board);
-
-  // boardObject    
-
-  const pozToXy = poz => [poz[0].codePointAt(0) - ACODE, +poz.slice(1) - 1];
-  const liberty = (poz, xCode = poz[0].codePointAt(0), y = +poz.slice(1)) => [
-    poz[0] + (y - 1),
-    String.fromCharCode(xCode + 1) +  y,
-    poz[0] + (y + 1),
-    String.fromCharCode(xCode - 1) + y
-  ];
-  const boardObject = () => 
-    [...Array(height)].reduce( (r,_,i) => {
-      [...Array(height)].map( (_,j) => r[String.fromCharCode(ACODE+j)+(i+1)] = '.' )
-    return r;
-    }, {}
-  );
 
   const log = () => board.join('').split();
 
   const instance = () => {
     
     board = reset();
-    
+    oboard = resetObjectBoard();
+
     return ({
-      get board(){ return board2D() },
+      get board(){ return to2dBoard() },
       get turn(){ return turnColor() },
       get size(){ return size() },
       pass, getPosition, handicapStones, move, rollback, pass, reset, inside, 
       get log(){ return log() },
       getShape,
-      boardObject
+      oboard,
     });
   }
 
@@ -104,4 +109,4 @@ console.log(game.board)
 console.log(game.inside([1,3]))
 console.log(game.log)
 console.log(game.getShape(3,2,'o'))
-console.log(game.boardObject())
+console.log(game.oboard)
