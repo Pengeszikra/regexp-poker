@@ -55,6 +55,22 @@ const go = (height, width = height) => {
   const chunker = chunk => arr => [...Array(arr.length / chunk |0)].map( (_, i) => arr.slice(i*chunk,(i+1)*chunk) )
   const board2D = () => chunker(width)(board);
 
+  // boardObject    
+
+  const pozToXy = poz => [poz[0].codePointAt(0) - ACODE, +poz.slice(1) - 1];
+  const liberty = (poz, xCode = poz[0].codePointAt(0), y = +poz.slice(1)) => [
+    poz[0] + (y - 1),
+    String.fromCharCode(xCode + 1) +  y,
+    poz[0] + (y + 1),
+    String.fromCharCode(xCode - 1) + y
+  ];
+  const boardObject = () => 
+    [...Array(height)].reduce( (r,_,i) => {
+      [...Array(height)].map( (_,j) => r[String.fromCharCode(ACODE+j)+(i+1)] = '.' )
+    return r;
+    }, {}
+  );
+
   const log = () => board.join('').split();
 
   const instance = () => {
@@ -67,7 +83,8 @@ const go = (height, width = height) => {
       get size(){ return size() },
       pass, getPosition, handicapStones, move, rollback, pass, reset, inside, 
       get log(){ return log() },
-      getShape
+      getShape,
+      boardObject
     });
   }
 
@@ -85,6 +102,6 @@ game.move("4D","3D","4H","5D","3H","4C","5B","4E")
 console.log(game.getPosition("4D"))
 console.log(game.board)
 console.log(game.inside([1,3]))
-
 console.log(game.log)
 console.log(game.getShape(3,2,'o'))
+console.log(game.boardObject())
