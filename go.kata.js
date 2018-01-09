@@ -41,16 +41,27 @@ const go = (height, width = height) => {
     let lives = arounds(poz).filter(live => oboard[live]);
     return place === EMPTY && lives.length > 0;
   };
-  const capture = poz => {
-    // '...x...'
-    // '..xox..'
-    // '..xox..'
-    // '...x...'
-    // C3
+  const capture = pick => {
     // after placeStone check opposite arrounds is capture or not.
-    let checks = arounds(poz);
-    let captures = [];
-    return checks.map( pos => pos+':'+getPosition(pos) )
+    let stone = getPosition(pick);
+    if (stone === EMPTY){ return false; }
+    let block = stone === 'x' ? 'o' : 'x';
+    let captured = [pick];
+    let shape = possibles => {
+      let inside = possibles.map( origo => 
+        arounds(origo)
+        .reduce(poz => getPosition(poz) === stone)
+      );
+      return inside
+      /*
+      let short = lives.map(poz => getPosition(poz) ).join('');
+      let lives.filter(poz => captured.indexOf(poz) === -1 && getPosition(poz) === stone);
+      return short.indexOf(EMPTY) !== -1
+        ? false
+        : captured
+        */
+    };
+    return shape(arounds(pick))
   };
   const placeStone = poz => {
     if (legalMove(poz, isBlackTurn)) {
@@ -94,9 +105,13 @@ console.log(game.size)
 game.move("1A")
 console.log(game.board)
 console.log(game.turn)
-console.log(game.oboard)
-game.move("4D","3D","4H","5D","3H","4C","5B","4E")
+//console.log(game.oboard)
+//game.move("4D","3D","4H","5D","3H","4C","5B","4E")
+game.move("6D","7E","6E","6F","4D","5E","5D","7D",
+"5C","6C","7H","3D","4E","4F","3E","2E",
+"3F","3G","2F","1F","2G","2H","1G","1H",
+"4C","3C","6H","4B","5H","5B");
 console.log(game.getPosition("4D"))
 console.log(game.board)
-console.log(game.inside([1,3]))
-console.log(game.capture("4E")) 
+console.log(game.getPosition("4C"))
+console.log(game.capture("4C")) 
