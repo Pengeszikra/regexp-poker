@@ -50,18 +50,14 @@ const go = (height, width = height) => {
     let shape = possibles => {
       let inside = possibles.map( origo => 
         arounds(origo)
-        .reduce(poz => getPosition(poz) === stone)
+        .reduce((result, poz, i) => 
+          getPosition(poz) === stone ? [...result,poz] : result
+          , []
+        )
       );
       return inside
-      /*
-      let short = lives.map(poz => getPosition(poz) ).join('');
-      let lives.filter(poz => captured.indexOf(poz) === -1 && getPosition(poz) === stone);
-      return short.indexOf(EMPTY) !== -1
-        ? false
-        : captured
-        */
-    };
-    return shape(arounds(pick))
+    };    
+    return shape(arounds(pick));    
   };
   const placeStone = poz => {
     if (legalMove(poz, isBlackTurn)) {
