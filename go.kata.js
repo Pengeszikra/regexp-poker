@@ -1,4 +1,4 @@
-const go = (height, width = height) => {
+  const go = (height, width = height) => {
   
   let isBlackTurn = true;
   let historyOfMoves = [];
@@ -50,14 +50,21 @@ const go = (height, width = height) => {
     let shape = possibles => {
       let inside = possibles.map( origo => 
         arounds(origo)
-        .reduce((result, poz, i) => 
-          getPosition(poz) === stone ? [...result,poz] : result
+        .reduce((result, poz, i) => {
+          console.log(poz)
+          //return getPosition(poz) === stone ? [...result,poz] : result
+          getPosition(poz) === stone 
+          && captured.indexOf(poz) === -1
+          && captured.push(poz)
+          return result
+          }
           , []
         )
       );
       return inside
     };    
-    return shape(arounds(pick));    
+    shape(arounds(pick));
+    return captured
   };
   const placeStone = poz => {
     if (legalMove(poz, isBlackTurn)) {
