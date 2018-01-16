@@ -22,6 +22,9 @@ const freakContazSequence = (s, smallest = 2) =>  {
   return smallest;
 };
 
+console.log(freakContazSequence("dUddUDUD"))
+
+/*
 console.log(freakContazSequence("d") === 2)
 
 console.log(freakContazSequence("D") === 3)
@@ -32,7 +35,6 @@ console.log(freakContazSequence("DdDddUUdDD") === 231)
 
 console.log(freakContazSequence("UddUDUD") === 1450)
 
-/*
 console.log(freakContazSequence("UDUDUDUddDUUUdd") === 9193711)
 
 console.log(freakContazSequence("ddDddUDUDUDUddDUUUdd") === 1883021696)
@@ -40,3 +42,13 @@ console.log(freakContazSequence("ddDddUDUDUDUddDUUUdd") === 1883021696)
 
 // https://www.codewars.com/kata/collatz/train/javascript
 const collatz = (n, r = [n], next = n % 2 !== 0 ? 3 * n + 1 : n / 2 ) => n > 1 ? collatz( next, [...r,next] ) : r.join('->');
+
+/*
+
+You may get very unlucky and get only hard numbers: try submitting 2-3 times if it times out; if it still does, probably you need to optimize your code more;
+
+Optimisation 1: when calculating the length of a sequence, if n is odd, what 3n+1 will be ?
+
+Optimisation 2: when looping through 1 to n, take i such that i<n/2, what will be the lenght of the sequence for 2i ?
+
+*/

@@ -1,4 +1,4 @@
-  const go = (height, width = height) => {
+const go = (height, width = height) => {
   
   let isBlackTurn = true;
   let historyOfMoves = [];
@@ -6,6 +6,8 @@
   let oboard = {};
   const ACODE = "A".charCodeAt(0);
   const EMPTY = '.';
+  const BLACK = 'x';
+  const WHITE = 'o';
 
   const xyToPoz = (x, y) => (x + 1) + String.fromCharCode(y + ACODE);
   const pozToXy = poz => [+poz.slice(0,-1) - 1, poz.slice(-1).codePointAt(0) - ACODE];
@@ -27,7 +29,7 @@
   );
   const liberty = (poz, stone = getPosition(poz)) => arounds(poz).filter(around => [EMPTY, stone].indexOf(getPosition(around)) !== -1 );
   const turnColor = () => isBlackTurn ? 'black' : 'white';
-  const turnFigure = () => isBlackTurn ? 'x' : 'o';
+  const turnFigure = () => isBlackTurn ? BLACK : WHITE;
   //const same = figure => figure ? 'x' : 'o';
   const turnOver = () => isBlackTurn = !isBlackTurn;
   const size = () => ({height, width});
@@ -45,15 +47,14 @@
     // after placeStone check opposite arrounds is capture or not.
     let stone = getPosition(pick);
     if (stone === EMPTY){ return false; }
-    let block = stone === 'x' ? 'o' : 'x';
+    let block = stone === BLACK ? WHITE : BLACK;
     let captured = [pick];
     let shape = possibles => {
       let inside = possibles.map( origo => 
         arounds(origo)
         .reduce((result, poz, i) => {
-          console.log(poz)
-          //return getPosition(poz) === stone ? [...result,poz] : result
-          getPosition(poz) === stone 
+          //console.log(poz)
+          getPosition(poz) === stone
           && captured.indexOf(poz) === -1
           && captured.push(poz)
           return result
@@ -69,7 +70,6 @@
   const placeStone = poz => {
     if (legalMove(poz, isBlackTurn)) {
       historyOfMoves.push( setBoard(poz, turnFigure()) );
-      //console.log(capture(poz))
       return turnOver();
     } 
     throwError('illegal move: ' + poz);
@@ -77,10 +77,7 @@
   const handicapStones = p => {};
   const move = (...positions) => positions.map(pos => placeStone(pos));
   const rollback = p => {};
-  //const reset = p => (height-3 ^ height-26) < 0 || (width-3 ^ width-26 ) < 0 ? [...Array(height*width)].map( _ => EMPTY) : throwError('illegal board size');
   const reset = () => (height-3 ^ height-26) < 0 || (width-3 ^ width-26 ) < 0 ? boardObject() : throwError('illegal board size');
-  //const chunker = chunk => arr => [...Array(arr.length / chunk |0)].map( (_, i) => arr.slice(i*chunk,(i+1)*chunk) );
-  //const board2D = () => chunker(width)(board);
 
   const instance = () => {
 
