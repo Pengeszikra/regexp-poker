@@ -53,7 +53,7 @@ const go = (height, width = height) => {
       let inside = possibles.map( origo => 
         arounds(origo)
         .reduce((result, poz, i) => {
-          //console.log(poz)
+          // console.log(poz)
           getPosition(poz) === stone
           && captured.indexOf(poz) === -1
           && captured.push(poz)
@@ -91,6 +91,7 @@ const go = (height, width = height) => {
       oboard,
       inside,
       capture,
+      get boardd(){ return ['-'.repeat(width-1),...to2dBoard().map( e => e.join('')),'-'.repeat(width)] },  // TODO debug
     });
   }
 
@@ -101,10 +102,13 @@ const go = (height, width = height) => {
 function Go(x, y){ return go(x, y); }
 
 let game = new Go(9);
+let debug = new Go(9)
 console.log(game.size)
+/*
 game.move("1A")
-console.log(game.board)
+console.log(game.boardd)
 console.log(game.turn)
+*/
 //console.log(game.oboard)
 //game.move("4D","3D","4H","5D","3H","4C","5B","4E")
 game.move("6D","7E","6E","6F","4D","5E","5D","7D",
@@ -112,6 +116,7 @@ game.move("6D","7E","6E","6F","4D","5E","5D","7D",
 "3F","3G","2F","1F","2G","2H","1G","1H",
 "4C","3C","6H","4B","5H","5B");
 console.log(game.getPosition("4D"))
-console.log(game.board)
+console.log(game.boardd)
+
 console.log(game.getPosition("4C"))
 console.log(game.capture("4C")) 
