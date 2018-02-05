@@ -8,7 +8,7 @@ const go = (height, width = height) => {
   const EMPTY = '.';
   const BLACK = 'x';
   const WHITE = 'o';
-
+  const HEADER = "A B C D E F G H I J K L M N O P Q R S T U V W X Y Z"; // TODO debug
   const xyToPoz = (x, y) => (x + 1) + String.fromCharCode(y + ACODE);
   const pozToXy = poz => [+poz.slice(0,-1) - 1, poz.slice(-1).codePointAt(0) - ACODE];
   const arounds = (poz, x = +poz.slice(0,-1), yCode = poz.slice(-1).codePointAt(0) ) => [
@@ -30,7 +30,6 @@ const go = (height, width = height) => {
   const liberty = (poz, stone = getPosition(poz)) => arounds(poz).filter(around => [EMPTY, stone].indexOf(getPosition(around)) !== -1 );
   const turnColor = () => isBlackTurn ? 'black' : 'white';
   const turnFigure = () => isBlackTurn ? BLACK : WHITE;
-  //const same = figure => figure ? 'x' : 'o';
   const turnOver = () => isBlackTurn = !isBlackTurn;
   const size = () => ({height, width});
   const pass = () => turnOver();
@@ -44,27 +43,29 @@ const go = (height, width = height) => {
     return place === EMPTY && lives.length > 0;
   };
   const capture = pick => {
-    // after placeStone check opposite arrounds is capture or not.
     let stone = getPosition(pick);
     if (stone === EMPTY){ return false; }
     let block = stone === BLACK ? WHITE : BLACK;
     let captured = [pick];
+    let inputLength = captured.length;
     let shape = possibles => {
-      let inside = possibles.map( origo => 
-        arounds(origo)
-        .reduce((result, poz, i) => {
-          // console.log(poz)
-          getPosition(poz) === stone
-          && captured.indexOf(poz) === -1
-          && captured.push(poz)
-          return result
-          }
-          , []
-        )
+      return possibles
+      .filter( poz => getPosition(poz) === stone )
+      .map( origo => arounds(origo)
+        .map( poz => {
+          let check = getPosition(poz);
+          if(check === EMPTY) throw "capture fail";
+          check === stone
+            && captured.indexOf(poz) === -1
+            && captured.push(poz);
+        })
       );
-      return inside
-    };    
+    };
     shape(arounds(pick));
+    while (captured.length !== inputLength) {
+      inputLength = captured.length;
+      try { shape(captured) } catch(err){ return []; }
+    } 
     return captured
   };
   const placeStone = poz => {
@@ -91,9 +92,15 @@ const go = (height, width = height) => {
       oboard,
       inside,
       capture,
-      get boardd(){ return ['-'.repeat(width-1),...to2dBoard().map( e => e.join('')),'-'.repeat(width)] },  // TODO debug
+      //------------------------------------ debug functions -----------------------------------------------
+      logCapture(pos){
+        let debug = new Go(width,height);
+        debug.move(...capture(pos));
+        return debug.boardd.map(e=>e.replace(/o/g,'x'))
+      },
+      get boardd(){ return [HEADER.slice(0,2*width),...to2dBoard().map( e => e.join(' '))] },  // TODO debug
     });
-  }
+  };
 
   return instance();
 }
@@ -104,11 +111,6 @@ function Go(x, y){ return go(x, y); }
 let game = new Go(9);
 let debug = new Go(9)
 console.log(game.size)
-/*
-game.move("1A")
-console.log(game.boardd)
-console.log(game.turn)
-*/
 //console.log(game.oboard)
 //game.move("4D","3D","4H","5D","3H","4C","5B","4E")
 game.move("6D","7E","6E","6F","4D","5E","5D","7D",
@@ -119,4 +121,9 @@ console.log(game.getPosition("4D"))
 console.log(game.boardd)
 
 console.log(game.getPosition("4C"))
-console.log(game.capture("4C")) 
+
+//console.log(game.capture("4C").sort())
+//console.log(game.capture("4E").sort()) 
+console.log(game.logCapture("4E")) 
+
+//console.log(game.capture("5D").sort()) 

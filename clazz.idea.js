@@ -45,3 +45,9 @@ c3 = clazz('first')
 console.log( c3.config )
 c4 = clazz('second')
 console.log( c4.config )
+
+/* good questions:
+
+    -how can I compose these function ?
+
+*/    
