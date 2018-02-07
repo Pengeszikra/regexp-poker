@@ -30,6 +30,7 @@ const go = (height, width = height) => {
   const liberty = (poz, stone = getPosition(poz)) => arounds(poz).filter(around => [EMPTY, stone].indexOf(getPosition(around)) !== -1 );
   const turnColor = () => isBlackTurn ? 'black' : 'white';
   const turnFigure = () => isBlackTurn ? BLACK : WHITE;
+  const another = stone => stone === BLACK ? WHITE : BLACK; 
   const turnOver = () => isBlackTurn = !isBlackTurn;
   const size = () => ({height, width});
   const pass = () => turnOver();
@@ -45,7 +46,7 @@ const go = (height, width = height) => {
   const capture = pick => {
     let stone = getPosition(pick);
     if (stone === EMPTY){ return false; }
-    let block = stone === BLACK ? WHITE : BLACK;
+    let block = another(stone);
     let captured = [pick];
     let inputLength = captured.length;
     let shape = possibles => {
@@ -61,7 +62,7 @@ const go = (height, width = height) => {
         })
       );
     };
-    shape(arounds(pick));
+    shape([pick]);
     while (captured.length !== inputLength) {
       inputLength = captured.length;
       try { shape(captured) } catch(err){ return []; }
@@ -71,6 +72,17 @@ const go = (height, width = height) => {
   const placeStone = poz => {
     if (legalMove(poz, isBlackTurn)) {
       historyOfMoves.push( setBoard(poz, turnFigure()) );
+      let enemy = another(turnFigure());
+      let enemyes = arounds(poz).filter( p => getPosition(p) === enemy );
+      enemyes.map( p => {
+        try { 
+          let captured = capture(p)
+          if (captured.length) {
+            console.log(captured);
+          }
+        } catch(err){}
+      });
+            
       return turnOver();
     } 
     throwError('illegal move: ' + poz);
