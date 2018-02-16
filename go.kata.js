@@ -1,4 +1,4 @@
-const go = (height, width = height) => {
+const go = (width, height = width) => {
   let isBlackTurn = true;
   let history = [];
   // let board = [];
@@ -10,8 +10,8 @@ const go = (height, width = height) => {
   const ILLEGAL_MOVE = 'illegal move: '
   const HANDICAPS = {
     '9x9'   : ['3G','7C','7G','3C','5E'],
-    '13x13' : ['4J','10D','10J','4D','7G','7D','7J','4G','10G'],
-    '19x19' : ['4P','16D','16P','4D','10J','10D','10P','4J','16J'],      
+    '13x13' : ['10K','4D','4K','10D','7G','7D','7K','10G','4G'],
+    '19x19' : ['16Q','4D','4Q','16D','10K','10D','10Q','16K','4K'],      
   };
   const HEADER = "A B C D E F G H I J K L M N O P Q R S T U V W X Y Z"; // TODO debug
   const xyToPoz = (x, y) => (x + 1) + String.fromCharCode(y + ACODE);
@@ -37,8 +37,11 @@ const go = (height, width = height) => {
   const turnFigure = () => isBlackTurn ? BLACK : WHITE;
   const another = stone => stone === BLACK ? WHITE : BLACK; 
   const turnOver = () => isBlackTurn = !isBlackTurn;
-  const size = () => ({height, width});
-  const pass = () => turnOver();
+  const size = () => ({width: height, height: width});
+  const pass = () => {
+    historyKO();
+    turnOver();
+  }
   const inside = poz => !!oboard[poz];
   const getPosition = poz => oboard[poz];
   const setBoard = (poz, stone) => oboard[poz] = stone;
@@ -77,16 +80,15 @@ const go = (height, width = height) => {
     try { 
       setBoard(poz, figure);
       captured = capture(poz);
-      setBoard(poz, EMPTY);      
+      setBoard(poz, EMPTY);
     } catch(err){}
-    if (captured && captured.length) {
-      setBoard(poz, turnFigure());
-      throwError(ILLEGAL_MOVE + poz);
-    } 
+    if (captured && captured.length) throwError(ILLEGAL_MOVE + poz);
+    setBoard(poz, turnFigure());
   };
-  const historyLog = () => {
+  const historyKO = (poz) => {
     let board = to2dBoard();
-    if (history.length > 1 && history[history.length-2].board.join() === board.join()) {
+    if (poz && history.length > 1 && history[history.length-2].board.join() === board.join()) {
+      setBoard(poz, EMPTY);
       throwError("Illegal KO move.");
     } 
     history.push({isBlackTurn, board});    
@@ -111,27 +113,31 @@ const go = (height, width = height) => {
         captured.map(poz => setBoard(poz, EMPTY));
       } catch(err){}
     });
-    selfCapturing(poz, turnFigure());
-    historyLog();
+    selfCapturing(poz, turnFigure());    
+    historyKO(poz);
     turnOver();
   };
   const handicapStones = (n, stones = HANDICAPS[width+'x'+height]) => {
-    stones && stones
+    if (history.length > 1) throwError('Handicap stones cannot be initialized after moves have been made');
+    if (!stones) throwError('Board is not 9x9, 13x13 or 19x19');
+    if (n > stones.length) throwError('Handicap stone amount is more than allowed');
+    stones
       .filter( (_,i) => i < n )
       .map( poz => setBoard( poz ,turnFigure()) );
   };
   const move = (...positions) => positions.map(pos => placeStone(pos));  
   const reset = () => {     
      isBlackTurn = true;
-     return (height-3 ^ height-26) < 0 || (width-3 ^ width-26 ) < 0 ? boardObject() : throwError('illegal board size');
+     oboard = (height-3 ^ height-26) < 0 || (width-3 ^ width-26 ) < 0 ? boardObject() : throwError('illegal board size');
+     historyKO();
   }
 
   const instance = () => {
-    oboard = reset();
+    reset();
     return ({
       get board(){ return to2dBoard() },
       get turn(){ return turnColor() },
-      get size(){ return size() },
+      get size(){ return size() },      
       pass, getPosition, handicapStones, move, rollback, pass, reset, 
       oboard,
       inside,
@@ -163,4 +169,6 @@ game.move("6D","7E","6E","6F","4D","5E","5D","7D",
 console.log(game.getPosition("4D"))
 console.log(game.boardd)
 game.rollback(1)
+console.log(game.boardd)
+game.reset()
 console.log(game.boardd)
