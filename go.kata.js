@@ -1,7 +1,6 @@
 const go = (width, height = width) => {
   let isBlackTurn = true;
   let history = [];
-  // let board = [];
   let oboard = {};
   const ACODE = "A".charCodeAt(0);
   const EMPTY = '.';
@@ -9,7 +8,7 @@ const go = (width, height = width) => {
   const WHITE = 'o';
   const ILLEGAL_MOVE = 'illegal move: '
   const HANDICAPS = {
-    '9x9'   : ['3G','7C','7G','3C','5E'],
+    '9x9'   : ['7G','3C','3G','7C','5E'],
     '13x13' : ['10K','4D','4K','10D','7G','7D','7K','10G','4G'],
     '19x19' : ['16Q','4D','4Q','16D','10K','10D','10Q','16K','4K'],      
   };
@@ -29,8 +28,7 @@ const go = (width, height = width) => {
     }, {}
   );
   const to2dBoard = () =>
-    [...Array(width)].map( (_,x) => 
-      [...Array(height)].map( (_,y) => oboard[xyToPoz(x,y)] ) 
+    ([...Array(width)].map( (_,x) => [...Array(height)].map( (_,y) => oboard[xyToPoz(x,y)] ) ).reverse()
   );
   const liberty = (poz, stone = getPosition(poz)) => arounds(poz).filter(around => [EMPTY, stone].indexOf(getPosition(around)) !== -1 );
   const turnColor = () => isBlackTurn ? 'black' : 'white';
@@ -172,3 +170,12 @@ game.rollback(1)
 console.log(game.boardd)
 game.reset()
 console.log(game.boardd)
+
+let classic = new Go(19);
+let movess = '16Q,16D,4Q,4D,3F,6C,4J,14R,17O,16S,17F,14D,16J,17R,13P,3O,13R,13S,14S,12R,13Q,15S,3M,6Q,3P,4O,5P,4M,3L,3R,4R,2P,3Q,2Q,2R,6O,2N,2O,3S,7N,12C,10C,12E,13C,13B,14B,13F,12B,9M,9O,11N,17L,16M,10E,10F,9F,10G,16G,17G,16F,16H,14G,13H,9G,9H,17E,15E,16E,14H,8H,10H,4F,4G,3E,5F,4E,3G,12D,8G,9E,6P,7P,7Q,8P,7R,8R,10P,11P,10O,6R,7S,6S,8S,9R,9S,10S,12S,10Q' + /*,13T */ ',18P,5S,8Q,5Q,9N,10M,8M,5O,5N,6M,6N,8L,7L,7M,8N,6L,7K,6K,10N,11O,9P,11Q,17P,11R' //,10R,7G,4L,4K,17M,16N,16P,14O,17N,16L,17K,16O,18O,7E,7D,2F,2E,15P,11S,12Q,11E,18J,11F,12G,18E,6E,9T,5R,15Q,8D,8C,8E,9D,6D,7C,18F,19F,19G,19E,17J,3N,1E,1D,1F,2D,2M,18K,19K,19L,19J,8F,7F,3K,2K,8T,6T,14F,13E,11G,11H,14E,13G,5K,5L,3J,5J,1L,2J,1N,2L,1M,19M,18M,18L,9L,8K,19L,13D,11C,18L,11M,10L,19L,15R,16R,18L,12O,12P,19L,14Q,15R,18L,12N,11P,19L,5D,5C,18L,18H,17H,19L,1K,1O,18L,3H,2H,19L,4C,3C,18L,9K,7J,19L,15H,19N,15G,15F,1Q,16K,15K,5E,5G,15T,14T';
+movess = movess.split(',')
+console.log(...movess)
+classic.move(...movess)
+console.log(classic.boardd)
+
+//let mv2 = '16Q,4D,16C,4R,4P,3P,3O,3Q,6C,3F,4N,5Q,3J,17E,16H,13C,16E,10C,17D,4B,17O,11R,4E,5E,9D,4F,9C,10D,10E,11E,11F,12E,12F,10B,9F,13F,13G,14F,14G,17N,16N,17M,18O,16J,17H,13K,10Q,11Q,10P,11P,11O,12O,12N,13O,13N,11N,10O,14N,11M,15O,16O,10N,14M,9N,15N,14O,12M,10R,9L,9J,11K,12G,10H,15G,15H,16F,17F,11L,10K,10M,12L,12K,8N,9O,8P,9P,9Q,8Q,9R,8O,10L,11J,9S,7P,13Q,8R,4C,5C,15P,8S,9T,10S,13H,10J,7L,11G,10F,8K,8L,8G,8F,7G,12C,15E,18E,13B,13D,13E,6E,5F,14D,12D,7J,9H,6B,14J,16G,15F,14H,12J,12B,11C,5H,5G,2P,13S,6D,3C,2Q,2R,14S,13R,14R,17K,2G,14T,15T,13T,16S,8B,9B,9A,8C,6H,6J,4H,2F,2E,1E,1D,12A,11A,16L,15J,17L,18L,9G,18J,12R,12S,1R,1S,12P,8T,14P,10T,11O,10O,5P,4K'
