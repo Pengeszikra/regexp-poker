@@ -83,22 +83,26 @@ const go = (width, height = width) => {
     if (captured && captured.length) throwError(ILLEGAL_MOVE + poz);
     setBoard(poz, turnFigure());
   };
+  const board2json = () => JSON.stringify(oboard);
   const historyKO = (poz) => {
-    let board = to2dBoard();
-    if (poz && history.length > 1 && history[history.length-2].board.join() === board.join()) {
+    let json = board2json();
+    let turn = isBlackTurn;
+    if (poz && history.length > 1 && history[history.length-2].json === json ) {
       setBoard(poz, EMPTY);
       throwError("Illegal KO move.");
+    } else {
+      history.push({turn, json});
     } 
-    history.push({isBlackTurn, board});    
   };
-  const from2dBoard = board => board.map( (w,x) => w.map( (e,y) => oboard[xyToPoz(x,y)] = e ));
   const rollback = n => {
-    if (history.length >= n) {
+    if (history.length > n) {
       history = history.slice(0,-n);
       let rolled = history.pop();
-      from2dBoard(rolled.board);
-      isBlackTurn = rolled.isBlackTurn;
-    }
+      oboard = JSON.parse(rolled.json);
+      isBlackTurn = rolled.turn;
+    } 
+    if (history.length == n) reset();
+    if (history.length < n ) throwError('too much rollback !');
   };
   const placeStone = poz => {
     legalMove(poz, isBlackTurn);
@@ -127,7 +131,7 @@ const go = (width, height = width) => {
   const reset = () => {     
      isBlackTurn = true;
      oboard = (height-3 ^ height-26) < 0 || (width-3 ^ width-26 ) < 0 ? boardObject() : throwError('illegal board size');
-     historyKO();
+     // historyKO();
   }
 
   const instance = () => {
@@ -148,6 +152,7 @@ const go = (width, height = width) => {
       },
       json(){ return JSON.stringify(oboard) },
       get boardd(){ return [HEADER.slice(0,2*height),...to2dBoard().map( e => e.join(' '))] },  // TODO debug
+      history
     });
   };
 
@@ -178,7 +183,7 @@ movess = movess.split(',')
 console.log(...movess)
 classic.move(...movess)
 console.log(classic.boardd)
-classic.rollback(95)
+classic.rollback(195)
 console.log(classic.boardd)
 // console.log(classic.json())
 
@@ -188,3 +193,10 @@ mv2 = mv2.split(',')
 console.log(mv2.indexOf('5H')) // problematick point 
 c2.move(...mv2)
 console.log(c2.boardd)
+c2.rollback(1)
+console.log(c2.turn)
+c2.rollback(1)
+console.log(c2.turn)
+c2.rollback(1)
+console.log(c2.turn)
+console.log(c2.history.map((e)=>e.turn ? '+' : '-').join(''))
