@@ -1,6 +1,6 @@
 const go = (width, height = width) => {
   let isBlackTurn = true;
-  let history = [];
+  let memory = [];
   let oboard = {};
   const HEADERS = "ABCDEFGHJKLMNOPQRSTUVWXYZ"; // KIHAL
   const EMPTY = '.';
@@ -37,7 +37,7 @@ const go = (width, height = width) => {
   const turnOver = () => isBlackTurn = !isBlackTurn;
   const size = () => ({width: height, height: width});
   const pass = () => {
-    historyKO();
+    memoryKO();
     turnOver();
   }
   const inside = poz => !!oboard[poz];
@@ -84,25 +84,23 @@ const go = (width, height = width) => {
     setBoard(poz, turnFigure());
   };
   const board2json = () => JSON.stringify(oboard);
-  const historyKO = (poz) => {
+  const memoryKO = (poz) => {
     let json = board2json();
     let turn = isBlackTurn;
-    if (poz && history.length > 1 && history[history.length-2].json === json ) {
+    if (poz && memory.length > 1 && memory[memory.length-2].json === json ) {
       setBoard(poz, EMPTY);
       throwError("Illegal KO move.");
     } else {
-      history.push({turn, json});
+      memory.push({turn, json});
     } 
   };
-  const rollback = n => {
-    if (history.length > n) {
-      history = history.slice(0,-n);
-      let rolled = history.pop();
-      oboard = JSON.parse(rolled.json);
-      isBlackTurn = rolled.turn;
-    } 
-    if (history.length == n) reset();
-    if (history.length < n ) throwError('too much rollback !');
+  const rollback = (n, ml = memory.length) => {
+    if (memory.length <= n || n < 1 ) throwError('too much rollback !');
+    if (n > 1) memory = memory.slice(0,-(n-1));
+    let {json, turn} = memory.pop();
+    console.log(turn)
+    oboard = JSON.parse(json);
+    isBlackTurn = turn;
   };
   const placeStone = poz => {
     legalMove(poz, isBlackTurn);
@@ -116,11 +114,11 @@ const go = (width, height = width) => {
       } catch(err){}
     });
     selfCapturing(poz, turnFigure());    
-    historyKO(poz);
+    memoryKO(poz);
     turnOver();
   };
   const handicapStones = (n, stones = HANDICAPS[width+'x'+height]) => {
-    if (history.length > 1) throwError('Handicap stones cannot be initialized after moves have been made');
+    if (memory.length > 1) throwError('Handicap stones cannot be initialized after moves have been made');
     if (!stones) throwError('Board is not 9x9, 13x13 or 19x19');
     if (n > stones.length) throwError('Handicap stone amount is more than allowed');
     stones
@@ -131,7 +129,7 @@ const go = (width, height = width) => {
   const reset = () => {     
      isBlackTurn = true;
      oboard = (height-3 ^ height-26) < 0 || (width-3 ^ width-26 ) < 0 ? boardObject() : throwError('illegal board size');
-     // historyKO();
+     // memoryKO();
   }
 
   const instance = () => {
@@ -152,7 +150,8 @@ const go = (width, height = width) => {
       },
       json(){ return JSON.stringify(oboard) },
       get boardd(){ return [HEADER.slice(0,2*height),...to2dBoard().map( e => e.join(' '))] },  // TODO debug
-      history
+      memory,
+      isBlackTurn
     });
   };
 
@@ -183,7 +182,7 @@ movess = movess.split(',')
 console.log(...movess)
 classic.move(...movess)
 console.log(classic.boardd)
-classic.rollback(195)
+classic.rollback(95)
 console.log(classic.boardd)
 // console.log(classic.json())
 
@@ -193,10 +192,17 @@ mv2 = mv2.split(',')
 console.log(mv2.indexOf('5H')) // problematick point 
 c2.move(...mv2)
 console.log(c2.boardd)
+console.log(c2.memory.map((e)=>e.turn ? '+' : '-').join(''))
+console.log(c2.isBlackTurn)
+console.log(c2.memory.splice(-1)[0].turn)
 c2.rollback(1)
+console.log(c2.isBlackTurn)
+console.log(c2.memory.splice(-1)[0].turn)
 console.log(c2.turn)
 c2.rollback(1)
+console.log(c2.memory.splice(-1)[0].turn)
 console.log(c2.turn)
 c2.rollback(1)
+console.log(c2.memory.splice(-1)[0].turn)
 console.log(c2.turn)
-console.log(c2.history.map((e)=>e.turn ? '+' : '-').join(''))
+console.log(c2.memory.map((e)=>e.turn ? '+' : '-').join(''))
