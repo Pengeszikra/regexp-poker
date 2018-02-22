@@ -98,6 +98,7 @@ const go = (width, height = width) => {
     if (memory.length <= n || n < 1 ) throwError('too much rollback !');
     let {json, turn} = memory.splice(-n,n)[0];
     oboard = JSON.parse(json);
+    console.log('----',turn)
     isBlackTurn = turn;
   };
   const placeStone = poz => {
@@ -147,7 +148,7 @@ const go = (width, height = width) => {
         return debug.boardd.map(e=>e.replace(/o/g,'x'))
       },
       json(){ return JSON.stringify(oboard) },
-      get boardd(){ return [HEADER.slice(0,2*height),...to2dBoard().map( e => e.join(' '))] },  // TODO debug
+      get boardd(){ return [HEADER.slice(0,2*height),...to2dBoard().map( e => e.join(' ')),'--> ' + turnColor()] },  // TODO debug
       memory,
       isBlackTurn
     });
@@ -159,7 +160,14 @@ const go = (width, height = width) => {
 // turn arrow to class like function
 function Go(x, y){ return go(x, y); }
 
+let g = new Go(9)
+g.move('3B','2B','1B')
+console.log(g.boardd)
+g.rollback(1)
+console.log(g.isBlackTurn)
+console.log(g.boardd)
 
+/*
 let game = new Go(9);
 let debug = new Go(9)
 console.log(game.size)
@@ -204,3 +212,4 @@ c2.rollback(1)
 console.log(c2.memory.slice(-1)[0].turn)
 console.log(c2.turn)
 console.log(c2.memory.map((e)=>e.turn ? '+' : '-').join(''))
+*/
