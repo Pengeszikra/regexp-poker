@@ -94,11 +94,9 @@ const go = (width, height = width) => {
       memory.push({turn, json});
     } 
   };
-  const rollback = (n, ml = memory.length) => {
+  const rollback = n => {
     if (memory.length <= n || n < 1 ) throwError('too much rollback !');
-    if (n > 1) memory = memory.slice(0,-(n-1));
-    let {json, turn} = memory.pop();
-    console.log(turn)
+    let {json, turn} = memory.splice(-n,n)[0];
     oboard = JSON.parse(json);
     isBlackTurn = turn;
   };
@@ -194,15 +192,15 @@ c2.move(...mv2)
 console.log(c2.boardd)
 console.log(c2.memory.map((e)=>e.turn ? '+' : '-').join(''))
 console.log(c2.isBlackTurn)
-console.log(c2.memory.splice(-1)[0].turn)
+console.log(c2.memory.slice(-1)[0].turn)
 c2.rollback(1)
 console.log(c2.isBlackTurn)
-console.log(c2.memory.splice(-1)[0].turn)
+console.log(c2.memory.slice(-1)[0].turn)
 console.log(c2.turn)
 c2.rollback(1)
-console.log(c2.memory.splice(-1)[0].turn)
+console.log(c2.memory.slice(-1)[0].turn)
 console.log(c2.turn)
 c2.rollback(1)
-console.log(c2.memory.splice(-1)[0].turn)
+console.log(c2.memory.slice(-1)[0].turn)
 console.log(c2.turn)
 console.log(c2.memory.map((e)=>e.turn ? '+' : '-').join(''))
