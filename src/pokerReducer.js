@@ -1,4 +1,6 @@
 import { actionCreator } from 'react-slash';
+import table from './reducers/table';
+import dealer from './reducers/dealer';
 
 export const [INIT, init] = actionCreator("INIT");
 export const [DEAL_CARD, dealCard] = actionCreator("DEAL_CARD");
@@ -17,6 +19,10 @@ export const [INIT_GAME, initGame] = actionCreator("INIT_GAME");
 export const [BET, bet] = actionCreator("BET");
 
 export const initialState = {
+  table: {
+    players: [],
+    dealer
+  }
 }
 
 export const reducer = (state, {type, payload}) => {

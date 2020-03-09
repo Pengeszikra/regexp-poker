@@ -1,7 +1,7 @@
 import React from "react";
 import Card from "./Card";
 
-export default ({ cards }) => (
+export default ({ cards = [] }) => (
   <div className="hand">
     {cards.map(card => (
       <Card 

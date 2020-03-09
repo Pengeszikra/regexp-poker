@@ -30,12 +30,8 @@
     "callbag-sample": "^2.0.0",
     "callbag-take-while": "^2.0.0",
     "callbag-timer": "^1.0.0",
-    "preact": "<10",
-    "preact-context": ">=1.1.0",
-    "preact-redux": "^2.1.0",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
-    "react-slash": "^0.8.3",
-    "redux": ">=2"
+    "react-slash": "^0.8.3"
   }
 }
