@@ -1,34 +1,41 @@
 {
-  "name": "regexp-poker",
-  "description": null,
-  "version": "0.0.95",
-  "dependencies": {
-    "preact": "8.2.1",
-    "preact-compat": "3.17.0",
-    "preact-redux": "^2.0.2",
-    "redux": "3.7.2",
-    "redux-saga": "0.15.6"
+  "name": "poker",
+  "description": "poker game client by react",
+  "version": "0.3.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "parcel build ./src/index.html",
+    "start": "parcel ./src/index.html",
+    "lint": "eslint ./src"
   },
   "devDependencies": {
-    "eslint": "^4.5.0",
-    "eslint-config-synacor": "^1.1.0",
-    "if-env": "^1.0.0",
-    "less": "^2.7.2",
-    "less-loader": "^4.0.5",
-    "node-sass": "^4.5.3",
-    "preact-cli": "^1.4.1",
-    "sass-loader": "^6.0.6",
-    "stylus": "^0.54.5",
-    "stylus-loader": "^3.0.1"
+    "@babel/core": "^7.8.4",
+    "@babel/plugin-proposal-pipeline-operator": "^7.8.3",
+    "@babel/plugin-transform-runtime": "^7.8.3",
+    "@babel/preset-react": "^7.8.3",
+    "babel-eslint": "^10.0.3",
+    "eslint": "^6.8.0",
+    "parcel-bundler": "^1.12.4",
+    "sass": "^1.25.0"
   },
-  "scripts": {
-    "test": "eslint . && preact test",
-    "start": "if-env NODE_ENV=production && npm run -s serve || npm run -s dev",
-    "build": "preact build",
-    "serve": "preact build && preact serve",
-    "dev": "preact watch"
-  },
-  "eslintConfig": {
-    "extends": "eslint-config-synacor"
+  "dependencies": {
+    "callbag-basics": "^3.2.0",
+    "callbag-debounce": "^2.1.2",
+    "callbag-from-event": "^1.2.1",
+    "callbag-from-function": "^2.1.0",
+    "callbag-interval": "^1.1.0",
+    "callbag-lazy": "^2.0.1",
+    "callbag-merge-with": "^1.0.3",
+    "callbag-sample": "^2.0.0",
+    "callbag-take-while": "^2.0.0",
+    "callbag-timer": "^1.0.0",
+    "preact": "<10",
+    "preact-context": ">=1.1.0",
+    "preact-redux": "^2.1.0",
+    "react": "^16.13.0",
+    "react-dom": "^16.13.0",
+    "react-slash": "^0.8.3",
+    "redux": ">=2"
   }
 }

@@ -1,15 +1,8 @@
-import { h, Component } from "preact";
-import { bindActionCreators } from "redux";
-import { connect } from "preact-redux";
-import * as Actions from "./Game/action";
+import React from "react";
 import Desk from "./components/Desk";
+import { useReducerActions } from "react-slash";
 
-class PokerContatiner extends Component {
-  render({table, dealer}){
-    return <Desk players={table.players} dealer={dealer}/>
-  }
+export default () => {
+  const [players, dealer] = [[], {}];
+  return <Desk players={players} dealer={dealer}/>
 }
-
-const stateProps = state => ({...state});
-const dispatchToProps = dispatch => ({actions: bindActionCreators(Actions, dispatch)});
-export default connect( stateProps, dispatchToProps)(PokerContatiner);

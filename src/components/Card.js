@@ -1,9 +1,6 @@
-import { Component } from "preact";
+import React from "react";
 
-export default class Desk extends Component {
-  render({ suit, run, hasReveal, id }) {    
-    return hasReveal
-      ? <div className={`${suit} c${run}`} key={id} />
-      : <div className="B" />
-  }
-}
+export default ({ suit, run, hasReveal, id }) =>    
+  hasReveal
+    ? <div className={`${suit} c${run}`} key={id} />
+    : <div className="B" />

@@ -1,2 +1,4 @@
 node_modules/
-angol1.txt
+dist/
+.vscode/
+.cache/

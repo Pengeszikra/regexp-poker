@@ -1,14 +1,10 @@
-import { Component } from "preact";
+import React from "react";
 import Player from "./Player";
 
-export default class Players extends Component {
-  render({ players }) {
-    return (
-      <div id="players">        
-        {players.map(player => (
-          <Player player={player} key={player.id} />
-        ))}
-      </div>
-    );
-  }
-}
+export default ({ players }) => (
+  <div id="players">        
+    {players.map(player => (
+      <Player player={player} key={player.id} />
+    ))}
+  </div>
+);
