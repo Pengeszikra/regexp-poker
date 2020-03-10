@@ -1,5 +1,6 @@
 import React from "react";
 import { render } from "react-dom";
 import PokerContainer from "./PokerContainer";
+import PokerMinimal from "./PokerMinimal";
 
-render(<PokerContainer /> , document.getElementById('root'));
+render(<PokerMinimal /> , document.getElementById('root'));

@@ -29,7 +29,7 @@ const originDeck = [].concat.apply([],
    [].slice.call(suit).map(s => [].slice.call(run).map(r => [s, r]))
 )
 
-const matrixLine = cards => {
+export const matrixLine = cards => {
   let matrix = runSuitArray.map(run => cards.match(check[run]))
   let line = matrix.map(n => n && n.length ? "" + n.length : "0").join("")
   let run = line.slice(12, 13) + line.slice(0, 13)
@@ -62,7 +62,7 @@ const highCard = (result, found) => {
   return high
 }
 
-const calcScore = result => {
+export const calcScore = result => {
   let found = pokerHands.HIGH_CARD
 
   let pairs = result.run.slice(1).match(/2/g)
@@ -109,22 +109,22 @@ const shuffle = () => Math.random() > .5 ? 1 : -1;
 
 let deck = odES6.sort( shuffle )
 
-const grab = n => deck.splice(0,n).map( card => card.join("")).join("");
+export const grab = n => deck.splice(0,n).map( card => card.join("")).join("");
 
-global.matrix  = matrixLine( grab(5) )
-// ;matrix 
+// global.matrix  = matrixLine( grab(5) )
 
-global.r = calcScore( matrix )
-// ;r
+// global.r = calcScore( matrix )
 
-const game = dealer =>
+export const game = dealer =>
   [
+    {hand:grab(2)},
+    {hand:grab(2)},
+    {hand:grab(2)},
+    {hand:grab(2)},
     {hand:grab(2)},
     {hand:grab(2)},
   ]
   .map( player => result({ player, dealer }) )
   .map( result => result.score )  
 
-global.rr = game({hand:grab(5)}) 
-//; rr
-
+// global.rr = game({hand:grab(5)}) 

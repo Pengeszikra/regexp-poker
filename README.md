@@ -6,3 +6,5 @@ Regexp Poker
 [prototype without preact](https://codepen.io/Omrega/pen/jyVjGg) 
 
 Poker game logic based on regexp.
+
+experimental react, react-slash, callbags version

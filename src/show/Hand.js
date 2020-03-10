@@ -3,12 +3,12 @@ import Card from "./Card";
 
 export default ({ cards = [] }) => (
   <div className="hand">
-    {cards.map(card => (
+    {cards.map(({suit, run, id, hasReveal}) => (
       <Card 
-        suit={card.suit} 
-        run={card.run} 
-        id={card.id} 
-        hasReveal={card.hasReveal}
+        suit={suit} 
+        run={run} 
+        id={id} 
+        hasReveal={hasReveal}
       />
     ))}
   </div>
